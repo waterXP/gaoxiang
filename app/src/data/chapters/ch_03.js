@@ -1,0 +1,158 @@
+// 第三章 - 第三章 英语词汇及历年真题
+// ================================================================
+// 格式说明:
+//   type  - 内容类型: 重点 | 难点 | 考点 | 定义 | 公式 | 案例 | 普通
+//   color - 可选自定义颜色 (如 "#ff6b6b")，不填则使用类型默认颜色
+//   html  - 页面内容 HTML，支持 <h2>, <h3>, <p>, <ul><li>, <table>
+//
+// 新增条目示例:
+//   {
+//     page: 999,
+//     type: "重点",
+//     color: "#ff6b6b",
+//     html: `<h2>标题</h2><p>正文内容</p>`,
+//   },
+// ================================================================
+
+export default [
+  {
+    page: 8,
+    type: "普通",  // 内容类型: 重点 | 难点 | 考点 | 定义 | 公式 | 案例 | 普通
+    // color: "",  // 可选: 自定义颜色 (如 "#ff6b6b")，留空则使用类型默认颜色
+    html: `<h2>第三章 英语词汇及历年真题</h2>
+<table class="t-def">
+<thead><tr><th>1、备考常见计算机技术词汇</th><th>OLAP</th></tr></thead>
+<tbody>
+<tr><td><strong>SOA-</strong></td><td>-Service Oriented Architecture，面向服务的体系结构。Distributed Computing--分布式计算。BI--- Business Intelligence，商业智能Cloud Computing、</td></tr>
+<tr><td><strong>IOT--</strong></td><td>--Internet of Things，物联</td></tr>
+<tr><td><strong>RFID-</strong></td><td>-Radio Frequency Identification，射频识别。</td></tr>
+<tr><td><strong>Big Data----大数据</strong></td><td>artificial intelligence 人工智能</td></tr>
+<tr><td><strong>Blockchain 区块链</strong></td><td>Internet+ Internet plus 互联网+</td></tr>
+<tr><td><strong>sensing layer 感知层</strong></td><td>application layer 应用层machine learning 机器学习Embedded system 嵌入式系统4V Volume（大量）、Velocity（高速）、Variety（多样）、Value（价值）New infrastructure construction 新型基础设施建设Beidou Satellite Navigation System 北斗卫星导航系统Digital Currency 数字货币</td></tr>
+<tr><td><strong>Driverless 无人驾驶</strong></td><td>Industrial Internet 工业互联网</td></tr>
+<tr><td><strong>时间敏感网络</strong></td><td>Internet of Vehicles, lov 车联网Intelligent Manufacturing,IM</td></tr>
+<tr><td><strong>智能制造</strong></td><td>Digital Transformation</td></tr>
+<tr><td><strong>元宇宙</strong></td><td>Software Defned Network, SDN</td></tr>
+<tr><td><strong>软件定义网络</strong></td><td>Storage Virtualization 存储虚拟化</td></tr>
+<tr><td><strong>绿色存储</strong></td><td>版权所有，侵权必究 购课淘宝店铺：91grk.taobao.com</td></tr>
+</tbody></table>`,
+  },
+  {
+    page: 9,
+    type: "普通",  // 内容类型: 重点 | 难点 | 考点 | 定义 | 公式 | 案例 | 普通
+    // color: "",  // 可选: 自定义颜色 (如 "#ff6b6b")，留空则使用类型默认颜色
+    html: `<p>User and Entity Behavior Analytics, UEBA</p>
+<p>用户和实体行分析</p>
+<p>Network Security Situation Awarencss</p>
+<p>网络安全态势感知</p>
+<p>Micro-Electro-Mechanical Systems, MEMS 微机电系统Natural Language Processing, NLP</p>
+<p>自然语言处理</p>
+<p>Virual Reality, VR 虚拟现实Augmented Reality, AR 增强现实</p>
+<ul><li>2、备考常见的项目管理词汇Accepted Deliverables</li>
+</ul><p>验收的可交付成果</p>
+<p>Acquire Resources 获取资源Activity Duration Estimates 活动持续时间估算Adaptive Life Cycle 适应型生命周期Affinity Diagrams 亲和图Alternative Analysis 备选方案分析Analogous Estimating 类比估算Benchmarking 标杆对照Bid Documents 招标文件Bottom-Up Estimating 自下而上估算Cause and Effect Diagram 因果图Checklist Analysis 核对单分析Checksheets 核查表Close Project or Phase</p>
+<p>结束项目或阶段</p>
+<p>Closing Process Group</p>
+<p>收尾过程组</p>
+<p>Collect Requirements 收集需求Colocation 集中办公Communication Methods 沟通方法Communication Models 沟通模型Communications Management Plan</p>
+<p>沟通管理计划</p>
+<p>Communication Technology 沟通技术Conduct Procurements 实施采购Context Diagrams 系统交互图Contingency Reserve 应急储备Control Chart 控制图Control Costs 控制成本Control Procurements</p>
+<p>控制采购</p>
+<p>Control Quality 控制质量</p>`,
+  },
+  {
+    page: 10,
+    type: "普通",  // 内容类型: 重点 | 难点 | 考点 | 定义 | 公式 | 案例 | 普通
+    // color: "",  // 可选: 自定义颜色 (如 "#ff6b6b")，留空则使用类型默认颜色
+    html: `<p>Control Resources 控制资源Control Schedule 控制进度Control Scope 控制范围Cost Aggregation 成本汇总Cost Baseline 成本基准Cost-Benefit Analysis</p>
+<p>成本效益分析</p>
+<p>Cost Management Plan 成本管理计划Cost of Quality （CoQ） 质量成本Crashing 赶工Create WBS 创建工作分解结构Critical Path Method （CPM） 关键路径法Decision Tree Analysis 决策树分析Decomposition 分解Defect Repair 缺陷补救Define Activities 定义活动Define Scope 定义范围Determine Budget 制定预算Develop Project Charter 制定项目章程Develop Schedule 制定进度计划Diagramming Techniques 图解技术Direct and Manage Project Work 指导与管理项目工作Documentation Reviews 文件审查Emotional Intelligence 情商Estimate Activity Durations 估算活动持续时间Estimate Activity Resources 估算活动资源Estimate Costs 估算成本Executing Process Group 执行过程组</p>
+<table class="t-def">
+<thead><tr><th>Fast Tracking</th><th>快速跟进</th></tr></thead>
+<tbody>
+<tr><td><strong>自由浮动时间</strong></td><td>Funding Limit Reconciliation</td></tr>
+<tr><td><strong>Histogram 直方图</strong></td><td>Identify Risks 识别风险Identify Stakeholders</td></tr>
+<tr><td><strong>识别干系人</strong></td><td>版权所有，侵权必究 购课淘宝店铺：91grk.taobao.com</td></tr>
+</tbody></table>`,
+  },
+  {
+    page: 11,
+    type: "普通",  // 内容类型: 重点 | 难点 | 考点 | 定义 | 公式 | 案例 | 普通
+    // color: "",  // 可选: 自定义颜色 (如 "#ff6b6b")，留空则使用类型默认颜色
+    html: `<p>Implement Risk Responses 实施风险应对Incremental Life Cycle 增量型生命周期Independent Estimates 独立估算Influence Diagram 影响图Initiating Process Group 启动过程组Interpersonal and Team Skills 人际关系与团队技能Interviews 访谈Invitation for Bid（IFB） 投标邀请书Iterative Life Cycle 迭代型生命周期Make-or-Buy Analysis 自制或外购分析Make-or-Buy Decisions</p>
+<p>自制或外购决策</p>
+<p>Manage Communications 管理沟通Management Reserve 管理储备Manage Quality 管理质量Manage Stakeholder Engagement 管理干系人参与Mandatory Dependency 强制性依赖关系Matrix Diagrams 矩阵图Matrix Organization 矩阵型组织Mind-Mapping Monitor 监督 收集项目绩效数据Monitor Communications 监督沟通Monitoring and Controlling Process Group/ 监控过程组Monitor Risks 监督风险Monte Carlo Simulation 蒙特卡洛模拟Multicriteria Decision Analysis 多标准决策分析Nominal Group Technique 名义小组技术Organizational Breakdown Structure （OBS） 组织分解结构Overall Project Risk 整体项目风险Parametric Estimating 参数估算Performance Reviews 绩效审查Perform Integrated Change Control 实施整体变更控制Perform Qualitative Risk Analysis 实施定性风险分析Perform Quantitative Risk Analysis 实施定量风险分析Plan Communications Management 规划沟通管理Plan Cost Management 规划成本管理Planning Process Group 规划过程组Plan Procurement Management 规划采购管理Plan Quality Management 规划质量管理Plan Resource Management 规划资源管理</p>`,
+  },
+  {
+    page: 12,
+    type: "普通",  // 内容类型: 重点 | 难点 | 考点 | 定义 | 公式 | 案例 | 普通
+    // color: "",  // 可选: 自定义颜色 (如 "#ff6b6b")，留空则使用类型默认颜色
+    html: `<p>Plan Risk Management 规划风险管理Plan Risk Responses 规划风险应对Plan Schedule Management 规划进度管理Plan Scope Management 规划范围管理Plan Stakeholder Engagement 规划干系人参与Plurality 相对多数原则Predictive Life Cycle 预测型生命周期Preventive Action 预防措施Probability and Impact Matrix 概率和影响矩阵Procurement Audits 采购审计Procurement Documents 采购文件Procurement Management Plan 采购管理计划Procurement Statement of Work 采购工作说明书Procurement Strategy 采购策略Product Analysis 产品分析Project Calendar 项目日历Project Communications Management 项目沟通管理Project Cost Management 项目成本管理Project Integration Management 项目整合管理Project Procurement Management 项目采购管理Project Quality Management 项目质量管理Project Resource Management 项目资源管理Project Risk Management 项目风险管理Project Schedule项目进度计划Project Schedule Management 项目进度管理Project Schedule Network Diagram 项目进度网络图Project Scope Management 项目范围管理Project Scope Statement 项目范围说明书Project Stakeholder Management 项目干系人管理Proposal Evaluation Techniques 建议书评价技术Quality Audits 质量审计Quality Checklists 质量核对单Quality Control Measurements</p>
+<p>质量控制测量结果</p>
+<p>Quality Management Plan 质量管理计划Quality Metrics 质量测量指标Quality Report 质量报告Questionnaires 问卷调查Regression Analysis 回归分析</p>`,
+  },
+  {
+    page: 13,
+    type: "普通",  // 内容类型: 重点 | 难点 | 考点 | 定义 | 公式 | 案例 | 普通
+    // color: "",  // 可选: 自定义颜色 (如 "#ff6b6b")，留空则使用类型默认颜色
+    html: `<p>Request for Information （RFI）|</p>
+<p>信息邀请书</p>
+<p>Request for Proposal （RFP） 建议邀请书Request for Quotation（RFQ） 报价邀请书Requirements Management Plan 需求管理计划Requirements Traceability Matrix 需求跟踪矩阵Reserve Analysis 储备分析Resource Breakdown Structure</p>
+<p>资源分解结构</p>
+<p>Resource Calendar 资源日历Resource Leveling 资源平衡Resource Management Plan 资源管理计划Resource Optimization Technique</p>
+<p>资源优化技术</p>
+<p>Resource Smoothing 资源平滑Risk Acceptance 风险接受Risk Audit 风险审计Risk Avoidance 风险规避Risk Data Quality Assessment 风险数据质量评估</p>
+<p>乡</p>
+<p>Risk Enhancement 风险提高Risk Escalation 风险上报Risk Exploiting 风险开拓Risk Exposure 风险敞口Risk Mitigation 风险减轻Risk Owner 风险责任人Risk Register 风险登记册Risk Report 风险报告Risk Review 风险审查Risk Sharing 风险分享Risk Threshold 风险临界值Risk Transference</p>
+<p>风险转移</p>
+<p>Root Cause Analysis 根本原因分析Schedule Baseline 进度基准Schedule Compression</p>
+<p>进度压缩</p>
+<p>Schedule Forecasts</p>
+<p>进度预测</p>
+<p>Schedule Management Plan</p>
+<p>进度管理计划</p>
+<p>Schedule Network Analysis</p>
+<p>进度网络分析</p>
+<p>Scope Baseline 范围基准Scope Creep 范围蔓延Scope Management Plan</p>
+<p>范围管理计划</p>`,
+  },
+  {
+    page: 14,
+    type: "普通",  // 内容类型: 重点 | 难点 | 考点 | 定义 | 公式 | 案例 | 普通
+    // color: "",  // 可选: 自定义颜色 (如 "#ff6b6b")，留空则使用类型默认颜色
+    html: `<p>Self-Organizing Teams 自组织团队Seller Proposals 卖方建议书Sensitivity Analysis 敏感性分析Sequence Activities 排列活动顺序Simulation 模拟Source Selection Criteria 供方选择标准Sponsor 发起人Stakeholder Analysis 干系人分析Stakeholder Engagement Assessment Matrix 干系人参与度评估矩阵Stakeholder Engagement Plan 干系人参与计划Stakeholder Register 干系人登记册Statement of Work （SOW） 工作说明书Statistical Sampling 统计抽样Team Charter 团队章程Team Management Plan 团队管理计划Test and Evaluation Documents</p>
+<p>测试与评估文件</p>
+<p>Three-Point Estimating 三点估算Tornado Diagram 龙卷风图Total Float 总浮动时间Trend Analysis 趋势分析Unanimity 一致同意Validate Scope 确认范围Variance Analysis 偏差分析Verified Deliverables 核实的可交付成果Virtual Teams 虚拟团队</p>
+<p>WBS Dictionary WBS 词典What-If Scenario Analysis 假设情景分析Work Breakdown Structure （WBS） 工作分解结构Work Package 工作包Work Performance Data</p>
+<p>工作绩效数据</p>
+<p>Work Performance Information 工作绩效信息Work Performance Reports</p>
+<p>工作绩效报告</p>
+<p>本章历年考点：</p>
+<p>时间类型</p>
+<p>2017年11月</p>
+<p>2018年5月</p>
+<p>2018年11月</p>
+<p>技术类</p>
+<p>2分（云计算、虚拟现实）</p>
+<p>2分（人工智能、区块链）</p>
+<p>2分（物联网、人工智能）</p>
+<p>管理类</p>
+<p>3分（范围验证、WBS 字典、关键路径）</p>
+<p>3分（范围管理、进度管理、质量管理）</p>
+<p>3分（范围确认、质量控制、类比估算）</p>`,
+  },
+  {
+    page: 15,
+    type: "普通",  // 内容类型: 重点 | 难点 | 考点 | 定义 | 公式 | 案例 | 普通
+    // color: "",  // 可选: 自定义颜色 (如 "#ff6b6b")，留空则使用类型默认颜色
+    html: `<table class="t-def">
+<thead><tr><th>2019年5月</th><th>2019年11月</th></tr></thead>
+<tbody>
+<tr><td><strong>2分（十四五规划、人工智能）</strong></td><td>3分（贡任分配矩阵、可研、项目经理权力）</td></tr>
+<tr><td><strong>2分（数据资产、大数据）</strong></td><td>3分（集成管理、战略管理、干系人管理）</td></tr>
+<tr><td><strong>2分（活动持续时间估算、法规时间）</strong></td><td>分4批考了：数字孪生、SMART、人工智能、趋势分析、模拟、规范期、进度计划、</td></tr>
+<tr><td><strong>2024年</strong></td><td>分2批考了：管理质量、控制质量、风险审查、沟通策略、规划采购、燃尽图、大语言模型、组织项目管理、项目临时性、数据、安全漏洞</td></tr>
+<tr><td><strong>2025年</strong></td><td>分2批考了：开发方法、项目治理、排列活动顺序、规划风险应对、绮效测量基准</td></tr>
+</tbody></table>`,
+  }
+];

@@ -1,0 +1,15 @@
+# PDF files (too large for GitHub)
+*.pdf
+
+# Node modules
+app/node_modules/
+node_modules/
+
+# Build output
+app/dist/
+
+# OCR output files
+ocr_*_output.json
+
+# Claude local config
+.claude/
