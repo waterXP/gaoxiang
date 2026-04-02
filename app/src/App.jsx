@@ -30,12 +30,23 @@ function getFuse() {
   return fuseInstance
 }
 
-// Extract text from html for search if text field is missing
+// Extract text from html or content for search if text field is missing
+function extractText(p) {
+  if (p.text) return p.text
+  if (p.html) return p.html.replace(/<[^>]+>/g, ' ')
+  if (p.content) {
+    return p.content.map(b => {
+      if (b.text) return b.text
+      if (b.parts) return b.parts.map(pt => typeof pt === 'string' ? pt : pt.text).join('')
+      if (b.items) return b.items.map(it => typeof it === 'string' ? it : it.text).join(' ')
+      if (b.rows) return b.rows.flat().map(c => typeof c === 'string' ? c : c.text).join(' ')
+      return ''
+    }).join(' ')
+  }
+  return ''
+}
 function ensureText(pages) {
-  return pages.map(p => ({
-    ...p,
-    text: p.text || p.html?.replace(/<[^>]+>/g, ' ') || '',
-  }))
+  return pages.map(p => ({ ...p, text: extractText(p) }))
 }
 const indexedPages = ensureText(allPages)
 
@@ -46,6 +57,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
   const [scrollToPage, setScrollToPage] = useState(null)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const done = state.done || {}
   const streak = state.streak || { days: 0, last: null }
@@ -114,8 +126,10 @@ export default function App() {
         curChIdx={curChIdx}
         done={done}
         streak={streak}
-        onSelect={setCurChIdx}
+        onSelect={(i) => { setCurChIdx(i); setSidebarOpen(false) }}
         onCheckin={handleCheckin}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
       />
       <div className="main">
         <Toolbar
@@ -125,6 +139,7 @@ export default function App() {
           memoMode={memoMode}
           onToggleMemo={() => setMemoMode(m => !m)}
           onRevealAll={handleRevealAll}
+          onToggleSidebar={() => setSidebarOpen(o => !o)}
         />
         <div className="content-wrap">
           {showSearch ? (

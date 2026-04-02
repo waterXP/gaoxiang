@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { getTypeStyle } from '../data/types.js'
 import { CONTENT_TYPES } from '../data/types.js'
+import { renderContent } from '../utils/renderContent.jsx'
 
 function PageBlock({ page, memoMode }) {
   const style = getTypeStyle(page.type, page.color)
@@ -35,7 +36,7 @@ function PageBlock({ page, memoMode }) {
         }
       })
     }
-  }, [memoMode, page.html])
+  }, [memoMode, page.html, page.content])
 
   return (
     <div
@@ -58,7 +59,9 @@ function PageBlock({ page, memoMode }) {
           </span>
         )}
       </div>
-      <div dangerouslySetInnerHTML={{ __html: page.html }} />
+      <div dangerouslySetInnerHTML={page.html ? { __html: page.html } : undefined}>
+        {page.content ? renderContent(page.content) : null}
+      </div>
     </div>
   )
 }

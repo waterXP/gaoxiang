@@ -357,6 +357,65 @@ body {
   line-height: 2;
 }
 
+/* ── Responsive / Mobile ─────────────────────────────────────────── */
+.sidebar-toggle { display: none; padding: 7px 10px; font-size: 18px; line-height: 1; }
+
+@media (max-width: 768px) {
+  .sidebar-toggle { display: block; }
+
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 100%;
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  .sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    z-index: 199;
+  }
+
+  .article {
+    padding: 16px 16px 60px;
+  }
+
+  .ch-header {
+    padding: 10px 14px 8px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .toolbar {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .streak { font-size: 12px; }
+
+  .tbtn { padding: 6px 10px; font-size: 12px; }
+
+  .article table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ch-nav { padding: 8px 12px; }
+  .ch-nav button { padding: 5px 12px; font-size: 12px; }
+
+  body { font-size: 17px; }
+  .article h2 { font-size: 20px; }
+  .article h3 { font-size: 17px; }
+  .article table { font-size: 15px; }
+  .article table.t-def td:first-child { width: 120px; white-space: normal; }
+}
+
+/* ── Memo mode ───────────────────────────────────────────────────── */
 /* Memo mode */
 .memo-mode .article p,
 .memo-mode .article li {

@@ -1,11 +1,12 @@
 export default function Toolbar({
-  searchQuery, onSearch, streak, memoMode, onToggleMemo, onRevealAll
+  searchQuery, onSearch, streak, memoMode, onToggleMemo, onRevealAll, onToggleSidebar
 }) {
   const today = new Date().toLocaleDateString('zh-CN')
   const days = streak?.last === today ? streak.days : (streak?.days || 0)
 
   return (
     <div className="toolbar">
+      <button className="tbtn sidebar-toggle" onClick={onToggleSidebar}>☰</button>
       <div className="search-wrap">
         <input
           className="search-input"
@@ -23,11 +24,11 @@ export default function Toolbar({
         className={`tbtn${memoMode ? ' on' : ''}`}
         onClick={onToggleMemo}
       >
-        🙈 背诵模式
+        🙈 背诵
       </button>
       {memoMode && (
         <button className="tbtn" onClick={onRevealAll}>
-          👁 全部显示
+          👁 显示
         </button>
       )}
     </div>

@@ -1,7 +1,7 @@
 import { CONTENT_TYPES } from '../data/types.js'
 
 export default function Sidebar({
-  chapters, curChIdx, done, streak, onSelect, onCheckin
+  chapters, curChIdx, done, streak, onSelect, onCheckin, isOpen, onClose
 }) {
   const today = new Date().toLocaleDateString('zh-CN')
   const checkedInToday = streak?.last === today
@@ -9,7 +9,9 @@ export default function Sidebar({
   const total = chapters.length
 
   return (
-    <div className="sidebar">
+    <>
+      {isOpen && <div className="sidebar-overlay" onClick={onClose} />}
+      <div className={`sidebar${isOpen ? ' open' : ''}`}>
       <div className="sidebar-top">
         <div className="app-title">信息系统项目管理师<br />2026 考试学习系统</div>
         <div className="prog-row">
@@ -41,5 +43,6 @@ export default function Sidebar({
         ))}
       </div>
     </div>
+    </>
   )
 }
