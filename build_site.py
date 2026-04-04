@@ -1,7 +1,18 @@
 #!/usr/bin/env python3
-"""Build static study website from OCR JSON data."""
+"""Build static study website from OCR JSON data.
 
-import json, re, os
+Usage:
+    python build_site.py [book_id]
+
+Examples:
+    python build_site.py              # defaults to book-001
+    python build_site.py book-002
+
+Input:  ocr_{book_id}.json
+Output: site/data_{book_id}.js
+"""
+
+import json, re, os, sys
 
 # ── Constants ──────────────────────────────────────────────────────────────────
 
@@ -42,7 +53,7 @@ def clean_lines(text):
         if not line: continue
         if HEADER_RE.search(line): continue
         if FOOTER_RE.search(line): continue
-        if re.fullmatch(r'\d{3,}', line): continue  # 3+ digit page numbers (100, 107…)
+        if re.fullmatch(r'\d{3,}', line): continue
         result.append(line)
     return result
 
@@ -71,14 +82,9 @@ def assign_chapters(pages, chapters):
     return [{'page': p['page'], 'chapterIdx': chapter_map.get(p['page'], 0), 'text': p['text']}
             for p in pages]
 
-# ── Table extraction (on raw lines, before reflow) ────────────────────────────
+# ── Table extraction ───────────────────────────────────────────────────────────
 
 def build_kaofenxi_table(lines):
-    """
-    Reconstruct 考情分析 table.
-    Known structure: rows = 上午选择题 / 案例分析题 / 论文写作 / 合计
-                     cols = 2023年5月 / 2023年11月 / 2024年 / 2025年
-    """
     found_years = [y for y in YEAR_COLS if any(y in l for l in lines)]
     if len(found_years) < 2:
         return None
@@ -94,7 +100,6 @@ def build_kaofenxi_table(lines):
     if not row_labels:
         return None
 
-    # Data tokens: short lines (≤ 20 chars) that are NOT structural labels
     skip_set = set(found_years) | seen | {'年份', '本章考情分析', '本章学习建议'}
     data = [l.strip() for l in lines
             if l.strip() and len(l.strip()) <= 20
@@ -115,11 +120,6 @@ def build_kaofenxi_table(lines):
 
 
 def build_def_table(header1, header2, pairs):
-    """
-    Build a 2-column definition HTML table.
-    Only use pairs where one item is clearly short (label) and one clearly long (desc).
-    Skip ambiguous pairs. Return None if fewer than 2 clean pairs.
-    """
     clean = []
     for a, b in pairs:
         la, lb = len(a), len(b)
@@ -127,7 +127,6 @@ def build_def_table(header1, header2, pairs):
             clean.append((a, b))
         elif lb <= 18 and la > 18:
             clean.append((b, a))
-        # else: ambiguous lengths — skip this pair
     if len(clean) < 2:
         return None
     rows = [f'<table class="t-def">',
@@ -139,24 +138,13 @@ def build_def_table(header1, header2, pairs):
     return '\n'.join(rows)
 
 
-# A "token" in our intermediate representation
-# type: 'line' | 'table_html' | 'raw_block'
 def segment_lines(lines):
-    """
-    Walk raw lines, extract table regions, return list of segments:
-      {'type': 'line',       'text': str}
-      {'type': 'table_html', 'html': str}
-      {'type': 'raw_block',  'lines': [str]}
-    """
     segments = []
     i = 0
     while i < len(lines):
         line = lines[i]
 
-        # ── 考情分析 table ─────────────────────────────────────────────────
         if '本章考情分析' in line:
-            # Collect year headers + row labels + score cells.
-            # "本章学习建议：" often appears mid-block due to OCR column order — include but skip.
             block = [line]
             j = i + 1
             while j < len(lines):
@@ -165,7 +153,7 @@ def segment_lines(lines):
                 is_label   = bool(KAO_ROWS_RE.search(l))
                 is_score   = bool(re.fullmatch(r'[\d分左右（）批次~\-—\s第]+', l) and len(l) <= 20)
                 is_header  = l in ('年份',)
-                is_suggest = '本章学习建议' in l   # include, but skip when building table
+                is_suggest = '本章学习建议' in l
                 if not (is_year or is_label or is_score or is_header or is_suggest):
                     break
                 block.append(l)
@@ -179,15 +167,12 @@ def segment_lines(lines):
             i = j
             continue
 
-        # ── 2-column definition table ──────────────────────────────────────
-        # Header pattern: two short consecutive lines (≤14 chars, no end punctuation)
         if (i + 3 < len(lines)
                 and len(line) <= 14 and line and line[-1] not in '。！？；，'
                 and len(lines[i+1]) <= 14 and lines[i+1] and lines[i+1][-1] not in '。！？；，'
                 and not H1_RE.match(line) and not H2_RE.match(line)):
 
             h1, h2 = line, lines[i+1]
-            # Collect candidate block: stop at major heading or very long line
             j = i + 2
             cand = []
             while j < len(lines):
@@ -197,9 +182,6 @@ def segment_lines(lines):
                 cand.append(l)
                 j += 1
 
-            # Build rows: a row starts with a SHORT label (≤18 chars, not ending with sentence punctuation),
-            # followed by one or more LONGER description lines.
-            # Short lines ending with 。！？ etc. are sentence fragments from description wrap, not labels.
             SENT_END = set('。！？；，、')
             pairs = []
             ci = 0
@@ -209,8 +191,7 @@ def segment_lines(lines):
                                       and (not label_line or label_line[-1] not in SENT_END))
                 if not is_label_candidate:
                     ci += 1
-                    continue   # skip orphan fragment before first label
-                # Collect description: all following lines until next short non-fragment label
+                    continue
                 desc_parts = []
                 ci += 1
                 while ci < len(cand):
@@ -274,8 +255,6 @@ def process_page(text):
 
     plain_parts = []
     html_parts  = []
-
-    # Collect consecutive 'line' segments, reflow them, then emit
     line_buf = []
 
     def flush_lines():
@@ -291,7 +270,6 @@ def process_page(text):
         else:
             flush_lines()
             if seg['type'] == 'table_html':
-                # Also add plain-text version for search
                 plain_parts.append(re.sub(r'<[^>]+>', ' ', seg['html']))
                 html_parts.append(seg['html'])
             elif seg['type'] == 'raw_block':
@@ -319,8 +297,16 @@ def build_data_js(pages, chapters):
 # ── Main ───────────────────────────────────────────────────────────────────────
 
 def main():
+    book_id     = sys.argv[1] if len(sys.argv) > 1 else "book-001"
+    input_path  = f"ocr_{book_id}.json"
+    output_path = f"site/data_{book_id}.js"
+
+    print(f"Book:   {book_id}")
+    print(f"Input:  {input_path}")
+    print(f"Output: {output_path}\n")
+
     print("Loading OCR data...")
-    with open('ocr_full_output.json', encoding='utf-8') as f:
+    with open(input_path, encoding='utf-8') as f:
         raw_pages = json.load(f)
     print(f"Loaded {len(raw_pages)} pages")
 
@@ -334,11 +320,11 @@ def main():
     print("Processing & generating data.js...")
     os.makedirs('site', exist_ok=True)
     js = build_data_js(pages, chapters)
-    with open('site/data.js', 'w', encoding='utf-8') as f:
+    with open(output_path, 'w', encoding='utf-8') as f:
         f.write(js)
 
-    size_kb = os.path.getsize('site/data.js') / 1024
-    print(f"Done — data.js: {size_kb:.0f} KB")
+    size_kb = os.path.getsize(output_path) / 1024
+    print(f"Done — {output_path}: {size_kb:.0f} KB")
 
 if __name__ == '__main__':
     main()

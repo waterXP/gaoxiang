@@ -58,6 +58,66 @@ body {
   margin-bottom: 12px;
 }
 
+/* Book selector */
+.book-selector {
+  margin-bottom: 12px;
+}
+.book-current {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.book-current-info { flex: 1; min-width: 0; }
+.book-current-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.4;
+}
+.book-current-sub {
+  font-size: 10.5px;
+  color: #64748b;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.book-switch-btn {
+  padding: 3px 8px;
+  background: #1e3a5f;
+  border: 1px solid #2d4a6e;
+  border-radius: 4px;
+  color: #94a3b8;
+  font-size: 11px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: inherit;
+  transition: background .15s;
+}
+.book-switch-btn:hover, .book-switch-btn.open { background: #2d4a6e; color: #cbd5e1; }
+.book-list {
+  background: #0f172a;
+  border: 1px solid #1e3a5f;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.book-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background .15s;
+  border-bottom: 1px solid #1e3a5f;
+}
+.book-item:last-child { border-bottom: none; }
+.book-item:hover { background: #1e3a5f; }
+.book-item.active { background: #1e3a5f; }
+.book-item-title { font-size: 12px; color: #e2e8f0; font-weight: 600; }
+.book-item-sub { font-size: 10.5px; color: #64748b; margin-top: 2px; }
+.book-item.active .book-item-title { color: var(--accent); }
+
 /* Progress */
 .prog-row { display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; margin-bottom: 5px; }
 .prog-bar { height: 5px; background: #1e3a5f; border-radius: 3px; overflow: hidden; margin-bottom: 10px; }

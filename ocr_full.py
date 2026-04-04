@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
-"""Full OCR script - process all 516 pages."""
+"""Full OCR script - process all pages of a PDF.
+
+Usage:
+    python ocr_full.py <pdf_path> [book_id]
+
+Examples:
+    python ocr_full.py "book.pdf"              # defaults to book-001
+    python ocr_full.py "新书.pdf" book-002
+"""
 
 import fitz
 import json
@@ -37,7 +45,6 @@ def ocr_image_with_vision(image_bytes: bytes) -> str:
 
 
 def process_all(pdf_path: str, output_path: str, resume: bool = True):
-    # Load existing progress if resuming
     results = []
     done_pages = set()
     if resume and Path(output_path).exists():
@@ -63,7 +70,6 @@ def process_all(pdf_path: str, output_path: str, resume: bool = True):
         text = ocr_image_with_vision(img_bytes)
         results.append({"page": page_num, "text": text})
 
-        # Save progress every 10 pages
         if len(results) % 10 == 0 or page_num == total:
             results_sorted = sorted(results, key=lambda x: x["page"])
             with open(output_path, "w", encoding="utf-8") as f:
@@ -80,8 +86,16 @@ def process_all(pdf_path: str, output_path: str, resume: bool = True):
 
 
 if __name__ == "__main__":
-    process_all(
-        pdf_path="26年重点考点汇总、案例专题、论文专题.pdf",
-        output_path="ocr_full_output.json",
-        resume=True,
-    )
+    if len(sys.argv) < 2:
+        print(__doc__)
+        sys.exit(1)
+
+    pdf_path = sys.argv[1]
+    book_id  = sys.argv[2] if len(sys.argv) > 2 else "book-001"
+    output_path = f"ocr_{book_id}.json"
+
+    print(f"PDF:    {pdf_path}")
+    print(f"Book:   {book_id}")
+    print(f"Output: {output_path}\n")
+
+    process_all(pdf_path=pdf_path, output_path=output_path, resume=True)

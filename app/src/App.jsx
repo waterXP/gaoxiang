@@ -1,7 +1,6 @@
-import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import Fuse from 'fuse.js'
-import { chapters } from './data/meta.js'
-import { allChapterPages } from './data/index.js'
+import { books } from './data/books.js'
 import { useStorage } from './hooks/useStorage.js'
 import Sidebar from './components/Sidebar.jsx'
 import Toolbar from './components/Toolbar.jsx'
@@ -9,28 +8,7 @@ import ChapterView from './components/ChapterView.jsx'
 import SearchPanel from './components/SearchPanel.jsx'
 import './index.css'
 
-// Flatten all pages into a single array with chapterIdx
-const allPages = allChapterPages.flatMap((chPages, chIdx) =>
-  chPages.map(p => ({ ...p, chapterIdx: chIdx }))
-)
-
-// Build fuse index once
-let fuseInstance = null
-function getFuse() {
-  if (!fuseInstance) {
-    fuseInstance = new Fuse(allPages, {
-      keys: ['text'],
-      threshold: 0.3,
-      includeMatches: true,
-      minMatchCharLength: 2,
-      distance: 20000,
-      ignoreLocation: true,
-    })
-  }
-  return fuseInstance
-}
-
-// Extract text from html or content for search if text field is missing
+// Extract text from html or content for search
 function extractText(p) {
   if (p.text) return p.text
   if (p.html) return p.html.replace(/<[^>]+>/g, ' ')
@@ -45,13 +23,10 @@ function extractText(p) {
   }
   return ''
 }
-function ensureText(pages) {
-  return pages.map(p => ({ ...p, text: extractText(p) }))
-}
-const indexedPages = ensureText(allPages)
 
 export default function App() {
   const { state, update } = useStorage()
+  const [curBookIdx, setCurBookIdx] = useState(0)
   const [curChIdx, setCurChIdx] = useState(0)
   const [memoMode, setMemoMode] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -59,30 +34,39 @@ export default function App() {
   const [scrollToPage, setScrollToPage] = useState(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
-  const done = state.done || {}
+  const curBook = books[curBookIdx]
+  const { chapters, allChapterPages } = curBook
+
+  // Per-book done state
+  const booksDone = state.booksDone || {}
+  const done = booksDone[curBook.id] || {}
   const streak = state.streak || { days: 0, last: null }
 
   // Pages for current chapter
-  const curPages = useMemo(() => allChapterPages[curChIdx] || [], [curChIdx])
+  const curPages = useMemo(() => allChapterPages[curChIdx] || [], [allChapterPages, curChIdx])
+
+  // Indexed pages for search — rebuilds when book changes
+  const indexedPages = useMemo(() => {
+    const allPages = allChapterPages.flatMap((chPages, chIdx) =>
+      chPages.map(p => ({ ...p, chapterIdx: chIdx }))
+    )
+    return allPages.map(p => ({ ...p, text: extractText(p) }))
+  }, [allChapterPages])
 
   // Search
-  const searchTimer = useRef(null)
   const handleSearch = useCallback((q) => {
     setSearchQuery(q)
-    clearTimeout(searchTimer.current)
     if (!q.trim()) { setSearchResults([]); return }
-    searchTimer.current = setTimeout(() => {
-      const fuse = new Fuse(indexedPages, {
-        keys: ['text'],
-        threshold: 0.3,
-        includeMatches: true,
-        minMatchCharLength: 2,
-        distance: 20000,
-        ignoreLocation: true,
-      })
-      setSearchResults(fuse.search(q, { limit: 30 }))
-    }, 280)
-  }, [])
+    const fuse = new Fuse(indexedPages, {
+      keys: ['text'],
+      threshold: 0.3,
+      includeMatches: true,
+      minMatchCharLength: 2,
+      distance: 20000,
+      ignoreLocation: true,
+    })
+    setSearchResults(fuse.search(q, { limit: 30 }))
+  }, [indexedPages])
 
   const handleSelectResult = useCallback((chIdx, page) => {
     setSearchQuery('')
@@ -90,6 +74,14 @@ export default function App() {
     setCurChIdx(chIdx)
     setScrollToPage(page)
     setTimeout(() => setScrollToPage(null), 500)
+  }, [])
+
+  // Switch book
+  const handleSelectBook = useCallback((bookIdx) => {
+    setCurBookIdx(bookIdx)
+    setCurChIdx(0)
+    setSearchQuery('')
+    setSearchResults([])
   }, [])
 
   // Check-in
@@ -102,15 +94,17 @@ export default function App() {
     alert(`打卡成功！连续第 ${days} 天 🔥`)
   }, [streak, update])
 
-  // Toggle chapter done
+  // Toggle chapter done (per-book)
   const handleToggleDone = useCallback(() => {
     update(s => {
-      const d = { ...(s.done || {}) }
+      const bd = { ...(s.booksDone || {}) }
+      const d = { ...(bd[curBook.id] || {}) }
       if (d[curChIdx]) delete d[curChIdx]
       else d[curChIdx] = 1
-      return { ...s, done: d }
+      bd[curBook.id] = d
+      return { ...s, booksDone: bd }
     })
-  }, [curChIdx, update])
+  }, [curChIdx, curBook.id, update])
 
   // Memo mode reveal all
   const handleRevealAll = useCallback(() => {
@@ -122,6 +116,9 @@ export default function App() {
   return (
     <div className={`app-layout${memoMode ? ' memo-mode' : ''}`}>
       <Sidebar
+        books={books}
+        curBookIdx={curBookIdx}
+        onSelectBook={handleSelectBook}
         chapters={chapters}
         curChIdx={curChIdx}
         done={done}
