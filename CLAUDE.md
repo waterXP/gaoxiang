@@ -49,19 +49,88 @@ Each entry in a `ch_XX.js` file:
 ```js
 {
   page: 42,
-  type: "重点",          // from types.js keys
-  color: "#ff6b6b",     // optional override
-  html: `<h2>...</h2><p>...</p>`,   // raw HTML string, OR
-  content: [            // structured alternative to html
-    { tag: "h2", text: "..." },
-    { tag: "p", parts: [{ text: "red", color: "#f00" }] },
-    { tag: "ul", items: ["item1", { text: "item2", bold: true }] },
-    { tag: "table", headers: ["A", "B"], rows: [["c1", "c2"]] },
-  ]
+  type: "重点",   // 类型标签，见下方
+  content: [ ... ]  // 内容数组（或用 html 字符串，二选一）
 }
 ```
 
 A page uses either `html` or `content`, not both.
+
+#### `type` values (`data/types.js`)
+
+| value | icon | color |
+|---|---|---|
+| `重点` | ⭐ | red |
+| `难点` | 🔥 | orange |
+| `考点` | 📝 | green |
+| `定义` | 📖 | blue |
+| `公式` | 📐 | purple |
+| `案例` | 💼 | cyan |
+| `普通` | — | gray |
+
+#### `content` array — String DSL (primary format)
+
+Each element is a string `"[tag][/modifier...]:text"`:
+
+**Tags:**
+
+| string | renders as |
+|---|---|
+| `"txt:..."` or `"..."` (no tag) | `<p>` |
+| `"h1:"` ~ `"h6:"` | heading |
+| `"img:path"` | `<img>` |
+| `"headers:A::B::C"` | table header row (columns separated by `::`) |
+| `"row:A::B::C"` | table data row — consecutive headers+rows auto-combine into `<table>` |
+
+**Modifiers** (between `/` and `:`):
+
+| modifier | effect |
+|---|---|
+| `im` | red text `#e53935` |
+| `hi` | yellow background `#fff176` |
+| `bold` | bold |
+| `left` / `center` / `right` | text align |
+
+**Array element → `<ul>`** (supports nesting):
+
+```js
+["项目1", "txt/im:重要项", ["嵌套A", "嵌套B"]]
+```
+
+**Table cell span modifiers** (inside headers/row cells):
+
+```
+"cols-2/hi:合并两列"   // colspan=2, yellow bg
+"rows-2:跨两行"        // rowspan=2
+```
+
+#### `content` array — Object format (legacy, still supported)
+
+```js
+{ tag: "h2", text: "标题", bold: true, color: "#f00", bg: "#fef", align: "center" }
+{ tag: "p", text: "内容", important: true, highlight: true }
+{ tag: "p", parts: [{ text: "红字", color: "#f00" }, "普通"] }
+{ tag: "ul", items: ["项1", { text: "项2", bold: true }] }
+{ tag: "table", headers: ["A", "B"], rows: [["c1", "c2"]] }
+{ tag: "img", src: "路径", alt: "说明" }
+```
+
+#### Full example
+
+```js
+{
+  page: 55,
+  type: "考点",
+  content: [
+    "h2:项目整合管理",
+    "txt/hi:整合管理是项目管理的核心",
+    ["制定项目章程", "制定项目管理计划", "txt/im:指导与管理项目执行"],
+    "headers:过程组::主要输出",
+    "row:启动::项目章程",
+    "row:规划::项目管理计划",
+  ]
+}
+```
 
 ### Key Components
 

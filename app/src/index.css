@@ -368,21 +368,13 @@ body {
   text-align: justify;
 }
 .article ul {
-  margin: 8px 0 12px 20px;
   list-style: none;
 }
-.article ul li {
-  padding: 3px 0;
-  line-height: 1.75;
-  position: relative;
+.article ul ul {
+  margin-left: 20px;
 }
-.article ul li::before {
-  content: '▸';
-  color: var(--accent);
-  position: absolute;
-  left: -16px;
-  font-size: 11px;
-  top: 6px;
+.article ul li {
+  line-height: 1.75;
 }
 .article table {
   width: 100%;

@@ -24,7 +24,7 @@ export default [
 <thead><tr><th>科目</th><th>2023年5月</th><th>2023年11月</th><th>2024年</th><th>2025年</th></tr></thead>
 <tbody>
 <tr><td><strong>上午选择题</strong></td><td>3</td><td>3 分左右</td><td>3</td><td>2分左右</td></tr>
-<tr><td><strong>紫例分析题</strong></td><td>6</td><td>5分（第1批）</td><td>10分（第2批）</td><td>16（第1批）</td></tr>
+<tr><td><strong>案例分析题</strong></td><td>6</td><td>5分（第1批）</td><td>10分（第2批）</td><td>16（第1批）</td></tr>
 <tr><td><strong>论文写作</strong></td><td>4分（第1批）</td><td>9分（第2批）</td><td>0</td><td>9</td></tr>
 <tr><td><strong>合计</strong></td><td>0</td><td>8-13 分左右</td><td>0</td><td>3-19</td></tr>
 </tbody></table>
@@ -37,10 +37,10 @@ export default [
 <ul><li>1、项目章程</li>
 <li>2、项目管理计划</li>
 </ul><p>资源管理计划</p>
-<ul><li>•干系人参与计划</li>
+<ul><li>干系人参与计划</li>
 <li>3、项目文件</li>
 </ul><p>需求文件</p>
-<ul><li>•干系人登记册</li>
+<ul><li>干系人登记册</li>
 <li>4、事业环境因素</li>
 <li>5、组织过程资产</li>
 </ul><p>管理沟</p>
@@ -48,7 +48,7 @@ export default [
 <ul><li>1、项目管理计划</li>
 </ul><p>资源管理计划</p>
 <p>沟通管理计划</p>
-<ul><li>•干系人参与计划</li>
+<ul><li>干系人参与计划</li>
 <li>2、项目文件</li>
 </ul><p>工具与技术</p>
 <ul><li>1、专家判断</li>
@@ -58,27 +58,27 @@ export default [
 <li>5、沟通方法</li>
 <li>6、人际关系与团队技能</li>
 </ul><p>沟通风格评估</p>
-<ul><li>•政策意识</li>
+<ul><li>政策意识</li>
 </ul><p>文化意识</p>
 <ul><li>7、数据表现</li>
-<li>•千系人参与度评估矩阵</li>
+<li>千系人参与度评估矩阵</li>
 <li>8、会议</li>
 <li>1、沟通技术</li>
 <li>2、沟通方法</li>
 <li>3、沟通技能</li>
-<li>•沟通胜任力</li>
+<li>沟通胜任力</li>
 </ul><p>反馈</p>
 <p>输出</p>
 <ul><li>1、沟通管理计划</li>
 <li>2、项目管理计划更新</li>
-<li>•干系人参与计划</li>
+<li>干系人参与计划</li>
 <li>3、项目文件更新</li>
-<li>•干系人登记册</li>
-<li>•项目进度计划</li>
+<li>干系人登记册</li>
+<li>项目进度计划</li>
 <li>1、项目沟通记录</li>
 <li>2、项目管理计划更新</li>
-<li>•沟通管理计划</li>
-<li>•千系人参与计划</li>
+<li>沟通管理计划</li>
+<li>千系人参与计划</li>
 <li>3、项目文件更新</li></ul>`,
   },
   {
@@ -86,7 +86,7 @@ export default [
     type: "普通",  // 内容类型: 重点 | 难点 | 考点 | 定义 | 公式 | 案例 | 普通
     // color: "",  // 可选: 自定义颜色 (如 "#ff6b6b")，留空则使用类型默认颜色
     html: `<table class="t-def">
-<thead><tr><th>•变更日志</th><th>•非口头技能</th></tr></thead>
+<thead><tr><th>变更日志</th><th>非口头技能</th></tr></thead>
 <tbody>
 <tr><td><strong>5、组织过程资产</strong></td><td>官方教程重点考点：（掌握部分可直接理解记忆）</td></tr>
 <tr><td><strong>把信息还原成有意义的思想或想法</strong></td><td>2、沟通模型包含5种状态：己发送、已收到、己理解、已认可、己转化为积极的行动。（掌握）</td></tr>

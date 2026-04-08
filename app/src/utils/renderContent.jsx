@@ -85,6 +85,7 @@ function renderTableObj(tbl, key) {
           {tbl.rows.map((row, j) => (
             <tr key={j}>
               {row.map((cell, k) => {
+                if (Array.isArray(cell)) return <td key={k}>{renderUl(cell)}</td>
                 const c = parseCell(cell)
                 return <td key={k} colSpan={c.colspan} rowSpan={c.rowspan} style={c.style}>{renderText(c.text)}</td>
               })}

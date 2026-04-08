@@ -24,7 +24,7 @@ export default [
 <thead><tr><th>科目</th><th>2023年5月</th><th>2023年11月</th><th>2024年</th><th>2025年</th></tr></thead>
 <tbody>
 <tr><td><strong>上午选择题</strong></td><td>2</td><td>2分左右</td><td>3</td><td>3 分左右</td></tr>
-<tr><td><strong>紫例分析题</strong></td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td><strong>案例分析题</strong></td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
 <tr><td><strong>论文写作</strong></td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
 <tr><td><strong>合计</strong></td><td>2</td><td>2分左右</td><td>3</td><td>3分左右</td></tr>
 </tbody></table>
