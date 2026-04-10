@@ -26,20 +26,41 @@
 
 // ---------- 通用工具 ----------
 
+const INLINE_RE = /\[\[(.*?)\]\]|\(\((.*?)\)\)/g
+
+function renderInline(str) {
+  if (!str || typeof str !== 'string') return str
+  if (!INLINE_RE.test(str)) return str
+  INLINE_RE.lastIndex = 0
+  const parts = []
+  let last = 0, m, k = 0
+  while ((m = INLINE_RE.exec(str)) !== null) {
+    if (m.index > last) parts.push(str.slice(last, m.index))
+    if (m[1] !== undefined) {
+      parts.push(<span key={k++} style={{ background: '#fff176' }}>{m[1]}</span>)
+    } else {
+      parts.push(<span key={k++} style={{ color: '#e53935' }}>{m[2]}</span>)
+    }
+    last = m.index + m[0].length
+  }
+  if (last < str.length) parts.push(str.slice(last))
+  return parts
+}
+
 function renderText(text) {
   if (!text) return text
   const lines = Array.isArray(text)
     ? text.flatMap(s => s.split('\n'))
     : text.split('\n')
-  if (lines.length === 1) return lines[0]
+  if (lines.length === 1) return renderInline(lines[0])
   return lines.flatMap((line, i, arr) =>
-    i < arr.length - 1 ? [line, <br key={i} />] : [line]
+    i < arr.length - 1 ? [renderInline(line), <br key={i} />] : [renderInline(line)]
   )
 }
 
 // ---------- DSL 解析 ----------
 
-const TAGS = new Set(['txt', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'headers', 'row'])
+const TAGS = new Set(['txt', 'hi', 'im', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'headers', 'row'])
 const CELL_SPAN = /^(cols|rows)-(\d+)$/
 const CELL_MODS = new Set(['im', 'hi', 'bold', 'left', 'center', 'right'])
 
@@ -108,9 +129,11 @@ function parseStr(str) {
 
   const content = colon === -1 ? '' : str.slice(colon + 1)
   const parts = head.split('/')
-  const tag = parts[0] === 'txt' ? 'p' : parts[0]
+  const tag = (parts[0] === 'txt' || parts[0] === 'hi' || parts[0] === 'im') ? 'p' : parts[0]
 
   const style = {}
+  if (parts[0] === 'hi') style.background = '#fff176'
+  if (parts[0] === 'im') style.color = '#e53935'
   for (let i = 1; i < parts.length; i++) {
     const m = parts[i]
     if (m === 'im') { if (!style.color) style.color = '#e53935' }
