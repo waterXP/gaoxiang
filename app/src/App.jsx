@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import Fuse from 'fuse.js'
 import { books } from './data/books.js'
 import { useStorage } from './hooks/useStorage.js'
@@ -24,10 +24,21 @@ function extractText(p) {
   return ''
 }
 
+// Derive initial book/chapter from URL params
+function getInitialNav() {
+  const params = new URLSearchParams(window.location.search)
+  const bookId = params.get('book')
+  const chParam = params.get('ch')
+  const bookIdx = bookId ? Math.max(0, books.findIndex(b => b.id === bookId)) : 0
+  const chIdx = chParam !== null ? Math.max(0, parseInt(chParam, 10) || 0) : 0
+  return { bookIdx, chIdx }
+}
+
 export default function App() {
   const { state, update } = useStorage()
-  const [curBookIdx, setCurBookIdx] = useState(0)
-  const [curChIdx, setCurChIdx] = useState(0)
+  const { bookIdx: initBookIdx, chIdx: initChIdx } = getInitialNav()
+  const [curBookIdx, setCurBookIdx] = useState(initBookIdx)
+  const [curChIdx, setCurChIdx] = useState(initChIdx)
   const [memoMode, setMemoMode] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
@@ -36,6 +47,14 @@ export default function App() {
 
   const curBook = books[curBookIdx]
   const { chapters, allChapterPages } = curBook
+
+  // Sync URL whenever book or chapter changes
+  useEffect(() => {
+    const params = new URLSearchParams()
+    params.set('book', curBook.id)
+    params.set('ch', String(curChIdx))
+    history.replaceState(null, '', `${window.location.pathname}?${params}`)
+  }, [curBook.id, curChIdx])
 
   // Per-book done state
   const booksDone = state.booksDone || {}
