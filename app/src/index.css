@@ -452,7 +452,7 @@ body {
   .tbtn { padding: 6px 10px; font-size: 12px; }
 
   .article table {
-    display: block;
+    /* display: block; */
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
