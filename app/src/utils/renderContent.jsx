@@ -216,7 +216,8 @@ function group(items) {
 
 // ---------- 旧版对象格式渲染（向后兼容） ----------
 
-function buildStyle(o) {
+function buildStyle(source) {
+  const o = source || {}
   const style = {}
   if (o.color) style.color = o.color
   else if (o.important) style.color = '#e53935'
