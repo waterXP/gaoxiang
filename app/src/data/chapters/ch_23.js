@@ -58,7 +58,7 @@ export default [
 </ul><table class="t-def">
 <thead><tr><th>例</th><th>预期目标</th></tr></thead>
 <tbody>
-<tr><td><strong>指标及检查方法</strong></td><td>.一干糸人参与的连续性：迪过观祭、记录方式，对干系人参与的连续</td></tr>
+<tr><td><strong>指标及检查方法</strong></td><td>.一干系人参与的连续性：迪过观察、记录方式，对干系人参与的连续</td></tr>
 <tr><td><strong>性进行衡量</strong></td><td>变更的频率：对项目范围、产品需求的大量变更或修改可能表明干</td></tr>
 <tr><td><strong>系人没有参与进来或与项目目标不一致</strong></td><td>1、干系人行为：干系人的行为可表明项目受益人是否对项目感到满</td></tr>
 <tr><td><strong>意和表示支持，或者他们是否反对项目</strong></td><td>2、干系人满意度：可通过调研、访谈和焦点小组方式，确定干系人满意度，判断干系人是否感到满意和表示支持，或者他们对项目及</td></tr>
