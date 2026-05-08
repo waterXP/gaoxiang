@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="学习系统图标">
+  <rect width="64" height="64" rx="14" fill="#1f2937"/>
+  <path d="M16 17c0-2.2 1.8-4 4-4h14c3.3 0 6 2.7 6 6v32c-1.8-1.9-4.3-3-7-3H20c-2.2 0-4-1.8-4-4V17Z" fill="#f8fafc"/>
+  <path d="M40 19c0-3.3 2.7-6 6-6h2c2.2 0 4 1.8 4 4v27c0 2.2-1.8 4-4 4h-1c-2.7 0-5.2 1.1-7 3V19Z" fill="#e5e7eb"/>
+  <path d="M22 24h10M22 31h10M22 38h8" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+  <path d="M44 22h3M44 29h3M44 36h3" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+</svg>
