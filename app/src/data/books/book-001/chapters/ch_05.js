@@ -3,6 +3,7 @@ import ch5_2 from "../imgs/ch_5_2.png";
 import ch5_3 from "../imgs/ch_5_3.png";
 import ch5_4 from "../imgs/ch_5_4.png";
 import ch5_5 from "../imgs/ch_5_5.png";
+import ch5_6 from "../imgs/ch_5_6.png";
 
 export default [
   {

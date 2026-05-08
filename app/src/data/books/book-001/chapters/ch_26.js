@@ -1,5 +1,3 @@
-// ch_26 - 已转换为 DSL 字符串格式
-
 export default [
   {
     page: 336,
