@@ -1,11 +1,13 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import Fuse from 'fuse.js'
 import { books } from './data/books.js'
+import { pointMap } from './data/books/book-001/points/index.js'
 import { useStorage } from './hooks/useStorage.js'
 import Sidebar from './components/Sidebar.jsx'
 import Toolbar from './components/Toolbar.jsx'
 import ChapterView from './components/ChapterView.jsx'
 import SearchPanel from './components/SearchPanel.jsx'
+import { extractContentText } from './utils/pointText.js'
 import './index.css'
 
 // Extract text from html or content for search
@@ -13,13 +15,7 @@ function extractText(p) {
   if (p.text) return p.text
   if (p.html) return p.html.replace(/<[^>]+>/g, ' ')
   if (p.content) {
-    return p.content.map(b => {
-      if (b.text) return b.text
-      if (b.parts) return b.parts.map(pt => typeof pt === 'string' ? pt : pt.text).join('')
-      if (b.items) return b.items.map(it => typeof it === 'string' ? it : it.text).join(' ')
-      if (b.rows) return b.rows.flat().map(c => typeof c === 'string' ? c : c.text).join(' ')
-      return ''
-    }).join(' ')
+    return extractContentText(p.content, pointMap)
   }
   return ''
 }
