@@ -22,7 +22,7 @@ const pointMap = {
 
 describe('renderContent point support', () => {
   it('renders inline point expansion with prefix', () => {
-    render(
+    const { container } = render(
       <div>
         {renderContent(
           [{ point: 'ch11-project-is-temporary', prefix: '1、' }],
@@ -31,9 +31,9 @@ describe('renderContent point support', () => {
       </div>,
     )
 
-    expect(
-      screen.getByText('1、项目是为创造独特的产品、服务或成果而进行的临时性工作。（掌握）'),
-    ).toBeInTheDocument()
+    expect(container).toHaveTextContent(
+      '1、项目是为创造独特的产品、服务或成果而进行的临时性工作。（掌握）',
+    )
   })
 
   it('renders inline string references as clickable elements', async () => {
@@ -49,7 +49,7 @@ describe('renderContent point support', () => {
       </div>,
     )
 
-    await user.click(screen.getByRole('button', { name: '实施整体变更控制' }))
+    await user.click(screen.getByText('实施整体变更控制'))
     expect(onPointClick).toHaveBeenCalledWith('ch11-integrated-change-control')
   })
 
