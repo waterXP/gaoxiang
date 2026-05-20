@@ -283,7 +283,9 @@ function buildStyle(source) {
 
 function renderParts(parts, options = {}) {
   return parts.map((part, i) => {
-    if (typeof part === 'string') return part
+    if (typeof part === 'string') {
+      return <span key={i}>{renderText(part, options)}</span>
+    }
     const style = buildStyle(part)
     return <span key={i} style={style}>{renderText(part.text, options)}</span>
   })
@@ -292,18 +294,24 @@ function renderParts(parts, options = {}) {
 function renderCell(cell, options = {}) {
   if (typeof cell === 'string') return renderText(cell, options)
   const style = buildStyle(cell)
-  return style ? <span style={style}>{renderText(cell.text, options)}</span> : renderText(cell.text, options)
+  const content = cell.parts
+    ? renderParts(cell.parts, options)
+    : renderText(cell.text, options)
+  return style ? <span style={style}>{content}</span> : content
 }
 
 function renderObj(obj, i, options = {}) {
   const style = buildStyle(obj)
   switch (obj.tag) {
-    case 'h1': return <h1 key={i} style={style}>{renderText(obj.text, options)}</h1>
-    case 'h2': return <h2 key={i} style={style}>{renderText(obj.text, options)}</h2>
-    case 'h3': return <h3 key={i} style={style}>{renderText(obj.text, options)}</h3>
-    case 'h4': return <h4 key={i} style={style}>{renderText(obj.text, options)}</h4>
-    case 'h5': return <h5 key={i} style={style}>{renderText(obj.text, options)}</h5>
-    case 'h6': return <h6 key={i} style={style}>{renderText(obj.text, options)}</h6>
+    case 'h1':
+    case 'h2':
+    case 'h3':
+    case 'h4':
+    case 'h5':
+    case 'h6': {
+      const H = obj.tag
+      return <H key={i} style={style}>{renderText(obj.text, options)}</H>
+    }
     case 'p':
       if (obj.parts) return <p key={i} style={style}>{renderParts(obj.parts, options)}</p>
       return <p key={i} style={style}>{renderText(obj.text, options)}</p>
@@ -333,11 +341,35 @@ function renderObj(obj, i, options = {}) {
   }
 }
 
-function prefixPointContent(content, prefix) {
-  if (!prefix) return content
+function applyPointPrefix(children, prefix) {
+  if (!prefix) return children
 
-  const items = Array.isArray(content) ? [...content] : [content]
-  return [prefix, ...items]
+  const items = Array.isArray(children) ? [...children] : [children]
+  const firstIndex = items.findIndex(item => item !== null && item !== undefined && item !== false)
+
+  if (firstIndex === -1) {
+    return (
+      <div className="point-block-prefixed" style={{ display: 'flex', alignItems: 'flex-start' }}>
+        <span className="point-prefix" style={{ flex: 'none' }}>{prefix}</span>
+      </div>
+    )
+  }
+
+  const first = items[firstIndex]
+  items[firstIndex] = (
+    <div
+      key={`point-prefix-${firstIndex}`}
+      className="point-block-prefixed"
+      style={{ display: 'flex', alignItems: 'flex-start' }}
+    >
+      <span className="point-prefix" style={{ flex: 'none' }}>{prefix}</span>
+      <div className="point-block-prefixed-content" style={{ minWidth: 0, flex: 1 }}>
+        {first}
+      </div>
+    </div>
+  )
+
+  return items
 }
 
 function renderPointBlock(item, key, options = {}) {
@@ -350,11 +382,11 @@ function renderPointBlock(item, key, options = {}) {
     )
   }
 
-  const content = prefixPointContent(point.content, item.prefix)
+  const content = applyPointPrefix(renderContent(point.content, options), item.prefix)
 
   return (
     <div key={key} className="point-block">
-      {renderContent(content, options)}
+      {content}
     </div>
   )
 }
