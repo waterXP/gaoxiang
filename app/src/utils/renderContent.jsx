@@ -26,9 +26,6 @@
 
 // ---------- 通用工具 ----------
 
-const INLINE_RE = /\[\[(.*?)\]\]|\(\((.*?)\)\)/g
-const POINT_INLINE_RE = /\{\{point:([^|}]+)\|([^}]+)\}\}/g
-
 function renderPointBrokenInline(id, key) {
   return (
     <span key={key} className="point-inline-broken">
@@ -215,6 +212,9 @@ function renderUl(items, key, options = {}) {
           const node = parseStr(item)
           return <li key={j} style={node.style}>{renderText(node.content, options)}</li>
         }
+        if (item && typeof item === 'object' && item.point) {
+          return <li key={j}>{renderPointBlock(item, undefined, options)}</li>
+        }
         // 旧版对象
         const s = buildStyle(item)
         return <li key={j} style={s}>{renderText(item.text, options)}</li>
@@ -290,7 +290,7 @@ function renderParts(parts, options = {}) {
 }
 
 function renderCell(cell, options = {}) {
-  if (typeof cell === 'string') return cell
+  if (typeof cell === 'string') return renderText(cell, options)
   const style = buildStyle(cell)
   return style ? <span style={style}>{renderText(cell.text, options)}</span> : renderText(cell.text, options)
 }
