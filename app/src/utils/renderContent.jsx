@@ -333,6 +333,13 @@ function renderObj(obj, i, options = {}) {
   }
 }
 
+function prefixPointContent(content, prefix) {
+  if (!prefix) return content
+
+  const items = Array.isArray(content) ? [...content] : [content]
+  return [prefix, ...items]
+}
+
 function renderPointBlock(item, key, options = {}) {
   const point = options.pointMap?.[item.point]
   if (!point) {
@@ -343,17 +350,7 @@ function renderPointBlock(item, key, options = {}) {
     )
   }
 
-  const content = item.prefix
-    ? point.content.map((entry, index) => {
-        if (index !== 0 || typeof entry !== 'string') return entry
-        const colon = entry.indexOf(':')
-        if (colon === -1) return `${item.prefix}${entry}`
-        const head = entry.slice(0, colon)
-        const baseTag = head.split('/')[0]
-        if (!['txt', 'hi', 'im'].includes(baseTag)) return entry
-        return `${entry.slice(0, colon + 1)}${item.prefix}${entry.slice(colon + 1)}`
-      })
-    : point.content
+  const content = prefixPointContent(point.content, item.prefix)
 
   return (
     <div key={key} className="point-block">
