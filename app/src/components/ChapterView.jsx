@@ -3,7 +3,7 @@ import { getTypeStyle } from '../data/types.js'
 import { CONTENT_TYPES } from '../data/types.js'
 import { renderContent } from '../utils/renderContent.jsx'
 
-function PageBlock({ page, memoMode }) {
+function PageBlock({ page, memoMode, pointMap, onPointClick }) {
   const style = getTypeStyle(page.type, page.color)
   const isPlain = (!page.type || page.type === '普通') && !page.color
   const blockRef = useRef(null)
@@ -60,7 +60,7 @@ function PageBlock({ page, memoMode }) {
         )}
       </div>
       <div dangerouslySetInnerHTML={page.html ? { __html: page.html } : undefined}>
-        {page.content ? renderContent(page.content) : null}
+        {page.content ? renderContent(page.content, { pointMap, onPointClick }) : null}
       </div>
     </div>
   )
@@ -68,7 +68,7 @@ function PageBlock({ page, memoMode }) {
 
 export default function ChapterView({
   chapter, pages, curChIdx, totalChapters, done, onToggleDone,
-  onPrev, onNext, memoMode, scrollToPage
+  onPrev, onNext, memoMode, scrollToPage, pointMap, onPointClick, standalonePoint,
 }) {
   const articleRef = useRef(null)
 
@@ -108,8 +108,21 @@ export default function ChapterView({
         className="article"
         ref={articleRef}
       >
-        {pages.map((p, i) => (
-          <PageBlock key={`${p.page}-${i}`} page={p} memoMode={memoMode} />
+        {standalonePoint ? (
+          <div className="page-block type-普通" data-page="point">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+              <span className="page-marker">知识点</span>
+            </div>
+            {renderContent(standalonePoint.content, { pointMap, onPointClick })}
+          </div>
+        ) : pages.map((p, i) => (
+          <PageBlock
+            key={`${p.page}-${i}`}
+            page={p}
+            memoMode={memoMode}
+            pointMap={pointMap}
+            onPointClick={onPointClick}
+          />
         ))}
       </div>
 
