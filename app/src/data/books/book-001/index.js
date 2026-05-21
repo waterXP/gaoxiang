@@ -38,6 +38,7 @@ import ch33 from './chapters/ch_33.js';
 import ch34 from './chapters/ch_34.js';
 import ch35 from './chapters/ch_35.js';
 import ch36 from './chapters/ch_36.js';
+import note from './chapters/note.js';
 
 export const allChapterPages = [
   ch00,
@@ -76,5 +77,6 @@ export const allChapterPages = [
   ch33,
   ch34,
   ch35,
-  ch36
+  ch36,
+  note
 ];

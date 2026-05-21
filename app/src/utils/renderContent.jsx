@@ -26,35 +26,85 @@
 
 // ---------- 通用工具 ----------
 
-const INLINE_RE = /\[\[(.*?)\]\]|\(\((.*?)\)\)/g
+function renderPointBrokenInline(id, key) {
+  return (
+    <span key={key} className="point-inline-broken">
+      [missing point: {id}]
+    </span>
+  )
+}
 
-function renderInline(str) {
-  if (!str || typeof str !== 'string') return str
-  if (!INLINE_RE.test(str)) return str
-  INLINE_RE.lastIndex = 0
-  const parts = []
-  let last = 0, m, k = 0
-  while ((m = INLINE_RE.exec(str)) !== null) {
-    if (m.index > last) parts.push(str.slice(last, m.index))
-    if (m[1] !== undefined) {
-      parts.push(<span key={k++} style={{ background: '#fff176' }}>{m[1]}</span>)
-    } else {
-      parts.push(<span key={k++} style={{ color: '#e53935' }}>{m[2]}</span>)
-    }
-    last = m.index + m[0].length
+function renderPointReference(id, text, key, onPointClick, pointMap) {
+  if (!pointMap?.[id]) {
+    return renderPointBrokenInline(id, key)
   }
-  if (last < str.length) parts.push(str.slice(last))
+
+  return (
+    <button
+      key={key}
+      type="button"
+      className="point-inline-link"
+      onClick={() => onPointClick?.(id)}
+    >
+      {text}
+    </button>
+  )
+}
+
+function renderInline(str, options = {}) {
+  const { pointMap, onPointClick } = options
+  if (!str || typeof str !== 'string') return str
+
+  const tokenRe = /\[\[(.*?)\]\]|\(\((.*?)\)\)|\{\{point:([^|}]+)\|([^}]+)\}\}/g
+  if (!tokenRe.test(str)) return str
+  tokenRe.lastIndex = 0
+
+  const parts = []
+  let last = 0
+  let match
+  let key = 0
+
+  while ((match = tokenRe.exec(str)) !== null) {
+    if (match.index > last) {
+      parts.push(str.slice(last, match.index))
+    }
+
+    if (match[1] !== undefined) {
+      parts.push(
+        <span key={key++} style={{ background: '#fff176' }}>
+          {match[1]}
+        </span>,
+      )
+    } else if (match[2] !== undefined) {
+      parts.push(
+        <span key={key++} style={{ color: '#e53935' }}>
+          {match[2]}
+        </span>,
+      )
+    } else {
+      parts.push(
+        renderPointReference(match[3], match[4], key++, onPointClick, pointMap),
+      )
+    }
+
+    last = match.index + match[0].length
+  }
+
+  if (last < str.length) {
+    parts.push(str.slice(last))
+  }
+
   return parts
 }
 
-function renderText(text) {
+function renderText(text, options = {}) {
   if (!text) return text
   const lines = Array.isArray(text)
     ? text.flatMap(s => s.split('\n'))
     : text.split('\n')
-  if (lines.length === 1) return renderInline(lines[0])
+  if (lines.length === 1) return renderInline(lines[0], options)
   return lines.flatMap((line, i, arr) =>
-    i < arr.length - 1 ? [renderInline(line), <br key={i} />] : [renderInline(line)]
+    i < arr.length - 1 ? [renderInline(line, options), <br key={i} />] : [renderInline(line, options)]
   )
 }
 
@@ -88,7 +138,7 @@ function parseCell(str) {
 }
 
 // 渲染新格式表格对象 { headers?, rows? }
-function renderTableObj(tbl, key) {
+function renderTableObj(tbl, key, options = {}) {
   return (
     <table key={key}>
       {tbl.headers && (
@@ -96,7 +146,7 @@ function renderTableObj(tbl, key) {
           <tr>
             {tbl.headers.map((h, j) => {
               const c = parseCell(h)
-              return <th key={j} colSpan={c.colspan} rowSpan={c.rowspan} style={c.style}>{renderText(c.text)}</th>
+              return <th key={j} colSpan={c.colspan} rowSpan={c.rowspan} style={c.style}>{renderText(c.text, options)}</th>
             })}
           </tr>
         </thead>
@@ -106,9 +156,9 @@ function renderTableObj(tbl, key) {
           {tbl.rows.map((row, j) => (
             <tr key={j}>
               {row.map((cell, k) => {
-                if (Array.isArray(cell)) return <td key={k}>{renderUl(cell)}</td>
+                if (Array.isArray(cell)) return <td key={k}>{renderUl(cell, undefined, options)}</td>
                 const c = parseCell(cell)
-                return <td key={k} colSpan={c.colspan} rowSpan={c.rowspan} style={c.style}>{renderText(c.text)}</td>
+                return <td key={k} colSpan={c.colspan} rowSpan={c.rowspan} style={c.style}>{renderText(c.text, options)}</td>
               })}
             </tr>
           ))}
@@ -151,20 +201,23 @@ function parseStr(str) {
 }
 
 // 渲染数组为 <ul>，支持嵌套
-function renderUl(items, key) {
+function renderUl(items, key, options = {}) {
   return (
     <ul key={key}>
       {items.map((item, j) => {
         if (Array.isArray(item)) {
-          return <li key={j}>{renderUl(item)}</li>
+          return <li key={j}>{renderUl(item, undefined, options)}</li>
         }
         if (typeof item === 'string') {
           const node = parseStr(item)
-          return <li key={j} style={node.style}>{renderText(node.content)}</li>
+          return <li key={j} style={node.style}>{renderText(node.content, options)}</li>
+        }
+        if (item && typeof item === 'object' && item.point) {
+          return <li key={j}>{renderPointBlock(item, undefined, options)}</li>
         }
         // 旧版对象
         const s = buildStyle(item)
-        return <li key={j} style={s}>{renderText(item.text)}</li>
+        return <li key={j} style={s}>{renderText(item.text, options)}</li>
       })}
     </ul>
   )
@@ -228,46 +281,54 @@ function buildStyle(source) {
   return Object.keys(style).length ? style : undefined
 }
 
-function renderParts(parts) {
+function renderParts(parts, options = {}) {
   return parts.map((part, i) => {
-    if (typeof part === 'string') return part
+    if (typeof part === 'string') {
+      return <span key={i}>{renderText(part, options)}</span>
+    }
     const style = buildStyle(part)
-    return <span key={i} style={style}>{part.text}</span>
+    return <span key={i} style={style}>{renderText(part.text, options)}</span>
   })
 }
 
-function renderCell(cell) {
-  if (typeof cell === 'string') return cell
+function renderCell(cell, options = {}) {
+  if (typeof cell === 'string') return renderText(cell, options)
   const style = buildStyle(cell)
-  return style ? <span style={style}>{renderText(cell.text)}</span> : renderText(cell.text)
+  const content = cell.parts
+    ? renderParts(cell.parts, options)
+    : renderText(cell.text, options)
+  return style ? <span style={style}>{content}</span> : content
 }
 
-function renderObj(obj, i) {
+function renderObj(obj, i, options = {}) {
   const style = buildStyle(obj)
   switch (obj.tag) {
-    case 'h1': return <h1 key={i} style={style}>{renderText(obj.text)}</h1>
-    case 'h2': return <h2 key={i} style={style}>{renderText(obj.text)}</h2>
-    case 'h3': return <h3 key={i} style={style}>{renderText(obj.text)}</h3>
-    case 'h4': return <h4 key={i} style={style}>{renderText(obj.text)}</h4>
-    case 'h5': return <h5 key={i} style={style}>{renderText(obj.text)}</h5>
-    case 'h6': return <h6 key={i} style={style}>{renderText(obj.text)}</h6>
+    case 'h1':
+    case 'h2':
+    case 'h3':
+    case 'h4':
+    case 'h5':
+    case 'h6': {
+      const H = obj.tag
+      return <H key={i} style={style}>{renderText(obj.text, options)}</H>
+    }
     case 'p':
-      if (obj.parts) return <p key={i} style={style}>{renderParts(obj.parts)}</p>
-      return <p key={i} style={style}>{renderText(obj.text)}</p>
+      if (obj.parts) return <p key={i} style={style}>{renderParts(obj.parts, options)}</p>
+      return <p key={i} style={style}>{renderText(obj.text, options)}</p>
     case 'ul':
-      return renderUl(obj.items, i)
+      return renderUl(obj.items, i, options)
     case 'table':
       return (
         <table key={i} style={obj.bg ? { background: obj.bg } : undefined}>
           {obj.headers && (
             <thead>
-              <tr>{obj.headers.map((h, j) => <th key={j}>{renderCell(h)}</th>)}</tr>
+              <tr>{obj.headers.map((h, j) => <th key={j}>{renderCell(h, options)}</th>)}</tr>
             </thead>
           )}
           <tbody>
             {obj.rows.map((row, j) => (
               <tr key={j}>
-                {row.map((cell, k) => <td key={k}>{renderCell(cell)}</td>)}
+                {row.map((cell, k) => <td key={k}>{renderCell(cell, options)}</td>)}
               </tr>
             ))}
           </tbody>
@@ -280,20 +341,75 @@ function renderObj(obj, i) {
   }
 }
 
+function applyPointPrefix(children, prefix) {
+  if (!prefix) return children
+
+  const items = Array.isArray(children) ? [...children] : [children]
+  const firstIndex = items.findIndex(item => item !== null && item !== undefined && item !== false)
+
+  if (firstIndex === -1) {
+    return (
+      <div className="point-block-prefixed" style={{ display: 'flex', alignItems: 'flex-start' }}>
+        <span className="point-prefix" style={{ flex: 'none' }}>{prefix}</span>
+      </div>
+    )
+  }
+
+  const first = items[firstIndex]
+  items[firstIndex] = (
+    <div
+      key={`point-prefix-${firstIndex}`}
+      className="point-block-prefixed"
+      style={{ display: 'flex', alignItems: 'flex-start' }}
+    >
+      <span className="point-prefix" style={{ flex: 'none' }}>{prefix}</span>
+      <div className="point-block-prefixed-content" style={{ minWidth: 0, flex: 1 }}>
+        {first}
+      </div>
+    </div>
+  )
+
+  return items
+}
+
+function renderPointBlock(item, key, options = {}) {
+  const point = options.pointMap?.[item.point]
+  if (!point) {
+    return (
+      <p key={key} className="point-block-missing">
+        [missing point: {item.point}]
+      </p>
+    )
+  }
+
+  const content = applyPointPrefix(renderContent(point.content, options), item.prefix)
+
+  return (
+    <div key={key} className="point-block">
+      {content}
+    </div>
+  )
+}
+
 // ---------- 主渲染函数 ----------
 
-export function renderContent(content) {
+export function renderContent(content, options = {}) {
   return group(content).map((g, i) => {
-    if (g.kind === 'ul') return renderUl(g.items, i)
-    if (g.kind === 'table-obj') return renderTableObj(g.tbl, i)
-    if (g.kind === 'obj') return renderObj(g.item, i)
+    if (g.kind === 'ul') return renderUl(g.items, i, options)
+    if (g.kind === 'table-obj') return renderTableObj(g.tbl, i, options)
+    if (g.kind === 'obj') {
+      if (g.item && typeof g.item === 'object' && g.item.point) {
+        return renderPointBlock(g.item, i, options)
+      }
+      return renderObj(g.item, i, options)
+    }
     if (g.kind === 'node') {
       const { tag, content: text, style } = g.node
       if (/^h[1-6]$/.test(tag)) {
         const H = tag
-        return <H key={i} style={style}>{renderText(text)}</H>
+        return <H key={i} style={style}>{renderText(text, options)}</H>
       }
-      if (tag === 'p') return <p key={i} style={style}>{renderText(text)}</p>
+      if (tag === 'p') return <p key={i} style={style}>{renderText(text, options)}</p>
       if (tag === 'img') return <img key={i} src={text} alt="" style={{ maxWidth: '100%', borderRadius: 4 }} />
       return null
     }
@@ -303,13 +419,13 @@ export function renderContent(content) {
         <table key={i}>
           {tbl.headers && (
             <thead>
-              <tr>{tbl.headers.map((h, j) => <th key={j}>{renderText(h)}</th>)}</tr>
+              <tr>{tbl.headers.map((h, j) => <th key={j}>{renderText(h, options)}</th>)}</tr>
             </thead>
           )}
           <tbody>
             {tbl.rows.map((row, j) => (
               <tr key={j}>
-                {row.map((cell, k) => <td key={k}>{renderText(cell)}</td>)}
+                {row.map((cell, k) => <td key={k}>{renderText(cell, options)}</td>)}
               </tr>
             ))}
           </tbody>

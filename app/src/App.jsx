@@ -1,11 +1,14 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import Fuse from 'fuse.js'
 import { books } from './data/books.js'
+import { pointMap } from './data/books/book-001/points/index.js'
 import { useStorage } from './hooks/useStorage.js'
 import Sidebar from './components/Sidebar.jsx'
+import PointModal from './components/PointModal.jsx'
 import Toolbar from './components/Toolbar.jsx'
 import ChapterView from './components/ChapterView.jsx'
 import SearchPanel from './components/SearchPanel.jsx'
+import { extractContentText } from './utils/pointText.js'
 import './index.css'
 
 // Extract text from html or content for search
@@ -13,13 +16,7 @@ function extractText(p) {
   if (p.text) return p.text
   if (p.html) return p.html.replace(/<[^>]+>/g, ' ')
   if (p.content) {
-    return p.content.map(b => {
-      if (b.text) return b.text
-      if (b.parts) return b.parts.map(pt => typeof pt === 'string' ? pt : pt.text).join('')
-      if (b.items) return b.items.map(it => typeof it === 'string' ? it : it.text).join(' ')
-      if (b.rows) return b.rows.flat().map(c => typeof c === 'string' ? c : c.text).join(' ')
-      return ''
-    }).join(' ')
+    return extractContentText(p.content, pointMap)
   }
   return ''
 }
@@ -29,16 +26,19 @@ function getInitialNav() {
   const params = new URLSearchParams(window.location.search)
   const bookId = params.get('book')
   const chParam = params.get('ch')
+  const pointId = params.get('point')
   const bookIdx = bookId ? Math.max(0, books.findIndex(b => b.id === bookId)) : 0
   const chIdx = chParam !== null ? Math.max(0, parseInt(chParam, 10) || 0) : 0
-  return { bookIdx, chIdx }
+  return { bookIdx, chIdx, pointId }
 }
 
 export default function App() {
   const { state, update } = useStorage()
-  const { bookIdx: initBookIdx, chIdx: initChIdx } = getInitialNav()
+  const { bookIdx: initBookIdx, chIdx: initChIdx, pointId: initPointId } = getInitialNav()
   const [curBookIdx, setCurBookIdx] = useState(initBookIdx)
   const [curChIdx, setCurChIdx] = useState(initChIdx)
+  const [activePointId, setActivePointId] = useState(null)
+  const [standalonePointId, setStandalonePointId] = useState(initPointId)
   const [memoMode, setMemoMode] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
@@ -53,8 +53,12 @@ export default function App() {
     const params = new URLSearchParams()
     params.set('book', curBook.id)
     params.set('ch', String(curChIdx))
+    const pointId = standalonePointId || activePointId
+    if (pointId) {
+      params.set('point', pointId)
+    }
     history.replaceState(null, '', `${window.location.pathname}?${params}`)
-  }, [curBook.id, curChIdx])
+  }, [activePointId, standalonePointId, curBook.id, curChIdx])
 
   // Per-book done state
   const booksDone = state.booksDone || {}
@@ -92,6 +96,8 @@ export default function App() {
     setSearchResults([])
     setCurChIdx(chIdx)
     setScrollToPage(page)
+    setActivePointId(null)
+    setStandalonePointId(null)
     setTimeout(() => setScrollToPage(null), 500)
   }, [])
 
@@ -99,6 +105,8 @@ export default function App() {
   const handleSelectBook = useCallback((bookIdx) => {
     setCurBookIdx(bookIdx)
     setCurChIdx(0)
+    setActivePointId(null)
+    setStandalonePointId(null)
     setSearchQuery('')
     setSearchResults([])
   }, [])
@@ -128,6 +136,23 @@ export default function App() {
   // Memo mode reveal all
   const handleRevealAll = useCallback(() => {
     document.querySelectorAll('.article p, .article li').forEach(el => el.classList.add('show'))
+  }, [])
+
+  const activePoint = activePointId ? pointMap[activePointId] || null : null
+  const standalonePoint = standalonePointId ? pointMap[standalonePointId] || null : null
+
+  const handleOpenPoint = useCallback((pointId) => {
+    setStandalonePointId(null)
+    setActivePointId(pointId)
+  }, [])
+
+  const handleClosePoint = useCallback(() => {
+    setActivePointId(null)
+  }, [])
+
+  const handleOpenStandalone = useCallback((pointId) => {
+    setActivePointId(null)
+    setStandalonePointId(pointId)
   }, [])
 
   const showSearch = searchQuery.trim() && searchResults.length >= 0
@@ -173,14 +198,32 @@ export default function App() {
               totalChapters={chapters.length}
               done={!!done[curChIdx]}
               onToggleDone={handleToggleDone}
-              onPrev={() => setCurChIdx(i => i - 1)}
-              onNext={() => setCurChIdx(i => i + 1)}
+              onPrev={() => {
+                setCurChIdx(i => i - 1)
+                setActivePointId(null)
+                setStandalonePointId(null)
+              }}
+              onNext={() => {
+                setCurChIdx(i => i + 1)
+                setActivePointId(null)
+                setStandalonePointId(null)
+              }}
               memoMode={memoMode}
               scrollToPage={scrollToPage}
+              pointMap={pointMap}
+              onPointClick={handleOpenPoint}
+              standalonePoint={standalonePoint}
             />
           )}
         </div>
       </div>
+      {activePoint ? (
+        <PointModal
+          point={activePoint}
+          onClose={handleClosePoint}
+          onOpenStandalone={handleOpenStandalone}
+        />
+      ) : null}
     </div>
   )
 }
