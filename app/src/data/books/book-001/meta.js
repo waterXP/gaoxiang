@@ -187,5 +187,9 @@ export const chapters = [
     "num": "第三十六章",
     "title": "第三十六章 输入、输出、工具和技术及技巧汇总",
     "startPage": 497
+  }, {
+    "num": "笔记",
+    "title": "笔记",
+    "startPage": 0
   }
 ];
