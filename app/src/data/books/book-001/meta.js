@@ -1,7 +1,3 @@
-// 章节元数据 — 手动可编辑
-// title: 章节显示名称
-// num: 章节编号标识
-
 export const chapters = [
   {
     "num": "前言",
@@ -198,6 +194,18 @@ export const chapters = [
   }, {
     "num": "案例笔记",
     "title": "案例笔记",
+    "startPage": 0
+  }, {
+    "num": "论文",
+    "title": "论文",
+    "startPage": 0
+  }, {
+    "num": "押题",
+    "title": "押题",
+    "startPage": 0
+  }, {
+    "num": "绩效域",
+    "title": "绩效域",
     "startPage": 0
   }
 ];
