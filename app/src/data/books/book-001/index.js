@@ -1,6 +1,3 @@
-// 数据入口 — 自动生成，无需手动编辑
-// 各章节数据请在 chapters/ch_XX.js 中编辑
-
 import ch00 from './chapters/ch_00.js';
 import ch01 from './chapters/ch_01.js';
 import ch02 from './chapters/ch_02.js';
@@ -38,7 +35,9 @@ import ch33 from './chapters/ch_33.js';
 import ch34 from './chapters/ch_34.js';
 import ch35 from './chapters/ch_35.js';
 import ch36 from './chapters/ch_36.js';
-import note from './chapters/note.js';
+import note1 from './chapters/note1.js';
+import note2 from './chapters/note2.js';
+import note3 from './chapters/note3.js';
 
 export const allChapterPages = [
   ch00,
@@ -78,5 +77,7 @@ export const allChapterPages = [
   ch34,
   ch35,
   ch36,
-  note
+  note1,
+  note2,
+  note3
 ];
