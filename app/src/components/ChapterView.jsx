@@ -1,9 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { getTypeStyle } from '../data/types.js'
-import { CONTENT_TYPES } from '../data/types.js'
 import { renderContent } from '../utils/renderContent.jsx'
 
-function PageBlock({ page, memoMode, pointMap, onPointClick }) {
+function PageBlock({ page, memoMode, pointMap, onPointClick, renderImage }) {
   const style = getTypeStyle(page.type, page.color)
   const isPlain = (!page.type || page.type === '普通') && !page.color
   const blockRef = useRef(null)
@@ -60,7 +59,7 @@ function PageBlock({ page, memoMode, pointMap, onPointClick }) {
         )}
       </div>
       <div dangerouslySetInnerHTML={page.html ? { __html: page.html } : undefined}>
-        {page.content ? renderContent(page.content, { pointMap, onPointClick }) : null}
+        {page.content ? renderContent(page.content, { pointMap, onPointClick, renderImage }) : null}
       </div>
     </div>
   )
@@ -68,7 +67,7 @@ function PageBlock({ page, memoMode, pointMap, onPointClick }) {
 
 export default function ChapterView({
   chapter, pages, curChIdx, totalChapters, done, onToggleDone,
-  onPrev, onNext, memoMode, scrollToPage, pointMap, onPointClick, standalonePoint,
+  onPrev, onNext, memoMode, scrollToPage, pointMap, onPointClick, standalonePoint, renderImage,
 }) {
   const articleRef = useRef(null)
 
@@ -113,7 +112,7 @@ export default function ChapterView({
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
               <span className="page-marker">知识点</span>
             </div>
-            {renderContent(standalonePoint.content, { pointMap, onPointClick })}
+            {renderContent(standalonePoint.content, { pointMap, onPointClick, renderImage })}
           </div>
         ) : pages.map((p, i) => (
           <PageBlock
@@ -122,6 +121,7 @@ export default function ChapterView({
             memoMode={memoMode}
             pointMap={pointMap}
             onPointClick={onPointClick}
+            renderImage={renderImage}
           />
         ))}
       </div>

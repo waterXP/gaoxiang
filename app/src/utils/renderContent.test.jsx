@@ -80,4 +80,29 @@ describe('renderContent point support', () => {
 
     expect(screen.getByText(/missing point/i)).toBeInTheDocument()
   })
+
+  it('uses injected image renderer for img content', () => {
+    const renderImage = vi.fn(({ key, src, alt }) => (
+      <button key={key} type="button">
+        {src}|{alt}
+      </button>
+    ))
+
+    render(
+      <div>
+        {renderContent(
+          ['img:/assets/sample.png'],
+          { renderImage },
+        )}
+      </div>,
+    )
+
+    expect(renderImage).toHaveBeenCalledWith({
+      key: 0,
+      src: '/assets/sample.png',
+      alt: '',
+      style: undefined,
+    })
+    expect(screen.getByRole('button')).toHaveTextContent('/assets/sample.png|')
+  })
 })

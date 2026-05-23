@@ -229,6 +229,104 @@ textarea {
   margin-bottom: 16px;
 }
 
+.content-image {
+  display: block;
+  width: 100%;
+  margin: 14px 0 18px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+  text-align: left;
+}
+
+.content-image-thumb {
+  display: block;
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.content-image-hint {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.image-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(2, 6, 23, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+}
+
+.image-lightbox-close,
+.image-lightbox-toolbar button {
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(15, 23, 42, 0.72);
+  color: #f8fafc;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.image-lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 8px 14px;
+}
+
+.image-lightbox-viewport {
+  width: min(92vw, 1200px);
+  height: min(82vh, 900px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+}
+
+.image-lightbox-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transform-origin: center center;
+  transition: transform 0.08s ease-out;
+  cursor: zoom-in;
+}
+
+.image-lightbox-image.is-zoomed {
+  cursor: grab;
+}
+
+.image-lightbox-toolbar {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.68);
+  color: #f8fafc;
+  backdrop-filter: blur(10px);
+}
+
+.image-lightbox-toolbar button {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 12px;
+  white-space: nowrap;
+}
+
 /* Check-in */
 .checkin-btn {
   width: 100%;
@@ -718,6 +816,32 @@ textarea {
   .article table.t-def td:first-child {
     width: 120px;
     white-space: normal;
+  }
+
+  .image-lightbox {
+    padding: 16px;
+  }
+
+  .image-lightbox-close {
+    top: 14px;
+    right: 14px;
+    padding: 7px 12px;
+  }
+
+  .image-lightbox-viewport {
+    width: 100%;
+    height: 78vh;
+  }
+
+  .image-lightbox-toolbar {
+    bottom: 14px;
+    gap: 8px;
+    padding: 6px 10px;
+  }
+
+  .image-lightbox-toolbar button {
+    min-width: 44px;
+    padding: 0 10px;
   }
 }
 

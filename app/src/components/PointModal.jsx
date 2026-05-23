@@ -1,6 +1,6 @@
 import { renderContent } from '../utils/renderContent.jsx'
 
-export default function PointModal({ point, onClose, onOpenStandalone }) {
+export default function PointModal({ point, onClose, onOpenStandalone, renderImage }) {
   if (!point) return null
 
   return (
@@ -21,10 +21,9 @@ export default function PointModal({ point, onClose, onOpenStandalone }) {
           </button>
         </div>
         <div className="point-modal-content">
-          {renderContent(point.content)}
+          {renderContent(point.content, { renderImage })}
         </div>
       </div>
     </div>
   )
 }
-

@@ -24,6 +24,15 @@
  * 旧版对象格式（向后兼容）
  */
 
+function renderImageNode({ key, src, alt = '', options = {}, style }) {
+  const { renderImage } = options
+  if (renderImage) {
+    return renderImage({ key, src, alt, style })
+  }
+
+  return <img key={key} src={src} alt={alt} style={{ maxWidth: '100%', borderRadius: 4, ...style }} />
+}
+
 // ---------- 通用工具 ----------
 
 function renderPointBrokenInline(id, key) {
@@ -335,7 +344,12 @@ function renderObj(obj, i, options = {}) {
         </table>
       )
     case 'img':
-      return <img key={i} src={obj.src} alt={obj.alt || ''} style={{ maxWidth: '100%', borderRadius: 4 }} />
+      return renderImageNode({
+        key: i,
+        src: obj.src,
+        alt: obj.alt || '',
+        options,
+      })
     default:
       return null
   }
@@ -410,7 +424,7 @@ export function renderContent(content, options = {}) {
         return <H key={i} style={style}>{renderText(text, options)}</H>
       }
       if (tag === 'p') return <p key={i} style={style}>{renderText(text, options)}</p>
-      if (tag === 'img') return <img key={i} src={text} alt="" style={{ maxWidth: '100%', borderRadius: 4 }} />
+      if (tag === 'img') return renderImageNode({ key: i, src: text, alt: '', options, style })
       return null
     }
     if (g.kind === 'table') {

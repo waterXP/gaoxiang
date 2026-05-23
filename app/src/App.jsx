@@ -8,6 +8,8 @@ import PointModal from './components/PointModal.jsx'
 import Toolbar from './components/Toolbar.jsx'
 import ChapterView from './components/ChapterView.jsx'
 import SearchPanel from './components/SearchPanel.jsx'
+import ContentImage from './components/ContentImage.jsx'
+import ImageLightbox from './components/ImageLightbox.jsx'
 import { extractContentText } from './utils/pointText.js'
 import './index.css'
 
@@ -44,6 +46,7 @@ export default function App() {
   const [searchResults, setSearchResults] = useState([])
   const [scrollToPage, setScrollToPage] = useState(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [activeImage, setActiveImage] = useState(null)
 
   const curBook = books[curBookIdx]
   const { chapters, allChapterPages } = curBook
@@ -155,6 +158,19 @@ export default function App() {
     setStandalonePointId(pointId)
   }, [])
 
+  const renderImage = useCallback(
+    ({ key, src, alt, style }) => (
+      <ContentImage
+        key={key}
+        src={src}
+        alt={alt}
+        style={style}
+        onOpen={setActiveImage}
+      />
+    ),
+    [],
+  )
+
   const showSearch = searchQuery.trim() && searchResults.length >= 0
 
   return (
@@ -213,6 +229,7 @@ export default function App() {
               pointMap={pointMap}
               onPointClick={handleOpenPoint}
               standalonePoint={standalonePoint}
+              renderImage={renderImage}
             />
           )}
         </div>
@@ -222,8 +239,10 @@ export default function App() {
           point={activePoint}
           onClose={handleClosePoint}
           onOpenStandalone={handleOpenStandalone}
+          renderImage={renderImage}
         />
       ) : null}
+      {activeImage ? <ImageLightbox image={activeImage} onClose={() => setActiveImage(null)} /> : null}
     </div>
   )
 }
