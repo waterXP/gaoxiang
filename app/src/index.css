@@ -603,13 +603,19 @@ textarea {
 }
 
 /* Article */
-.article {
+.article-shell {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.article {
   padding: 24px 32px 60px;
   max-width: 860px;
   width: 100%;
+  box-sizing: border-box;
   margin: 0 auto;
+  overflow-x: hidden;
 }
 
 /* Page block (type-colored) */

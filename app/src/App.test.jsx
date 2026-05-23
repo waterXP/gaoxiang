@@ -89,4 +89,17 @@ describe('App point interactions', () => {
       screen.getByText('第十一章 项目管理概论', { selector: '.ch-label' }),
     ).toBeInTheDocument()
   })
+
+  it('renders the article inside a separate scroll shell', async () => {
+    render(<App />)
+
+    await userEvent.click(
+      screen.getByText('第十一章 项目管理概论', { selector: '.ch-label' }),
+    )
+
+    const article = document.querySelector('.article')
+    expect(article).not.toBeNull()
+    expect(article?.parentElement).not.toBeNull()
+    expect(article?.parentElement).toHaveClass('article-shell')
+  })
 })

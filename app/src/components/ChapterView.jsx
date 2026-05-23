@@ -85,7 +85,9 @@ export default function ChapterView({
     return (
       <div className="chapter-panel">
         <div className="ch-header"><h2>请从左侧选择章节</h2></div>
-        <div className="article" ref={articleRef} />
+        <div className="article-shell" ref={articleRef}>
+          <div className="article" />
+        </div>
       </div>
     )
   }
@@ -104,26 +106,28 @@ export default function ChapterView({
       </div>
 
       <div
-        className="article"
+        className="article-shell"
         ref={articleRef}
       >
-        {standalonePoint ? (
-          <div className="page-block type-普通" data-page="point">
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-              <span className="page-marker">知识点</span>
+        <div className="article">
+          {standalonePoint ? (
+            <div className="page-block type-普通" data-page="point">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                <span className="page-marker">知识点</span>
+              </div>
+              {renderContent(standalonePoint.content, { pointMap, onPointClick, renderImage })}
             </div>
-            {renderContent(standalonePoint.content, { pointMap, onPointClick, renderImage })}
-          </div>
-        ) : pages.map((p, i) => (
-          <PageBlock
-            key={`${p.page}-${i}`}
-            page={p}
-            memoMode={memoMode}
-            pointMap={pointMap}
-            onPointClick={onPointClick}
-            renderImage={renderImage}
-          />
-        ))}
+          ) : pages.map((p, i) => (
+            <PageBlock
+              key={`${p.page}-${i}`}
+              page={p}
+              memoMode={memoMode}
+              pointMap={pointMap}
+              onPointClick={onPointClick}
+              renderImage={renderImage}
+            />
+          ))}
+        </div>
       </div>
 
       <div className="ch-nav">
