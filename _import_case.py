@@ -84,6 +84,27 @@ def merge_row(cells):
     return out
 
 
+CELL_MODS = {'im', 'hi', 'bold', 'left', 'center', 'right'}
+
+
+def mark_first_cell(row):
+    """正文行第一列统一标红（im:）；表头不动。"""
+    if not row:
+        return row
+    c = row[0]
+    if not isinstance(c, str) or not c:
+        return row
+    head = c.split(':', 1)[0] if ':' in c else c
+    parts = head.split('/')
+    if 'im' in parts:
+        return row
+    is_mod = any(re.fullmatch(r'(cols|rows)-\d+', p) for p in parts) or any(p in CELL_MODS for p in parts)
+    if is_mod and ':' in c:
+        h, b = c.split(':', 1)
+        return ['im/' + h + ':' + b] + list(row[1:])
+    return ['im:' + c] + list(row[1:])
+
+
 def build_two_tier(row0, row1):
     """把「分组行 + 子表头行」压成二维表头。
 
@@ -166,12 +187,13 @@ def parse_answer(qa):
                 tier = build_two_tier(rows[0], rows[1])
                 if tier:
                     items.append({'kind': 'table', 'headers': tier,
-                                  'rows': [merge_row(r) for r in rows[2:]]})
+                                  'rows': [mark_first_cell(merge_row(r)) for r in rows[2:]]})
                 else:
                     items.append({'kind': 'table', 'headers': merge_row(rows[0]),
-                                  'rows': [merge_row(r) for r in rows[1:]]})
+                                  'rows': [mark_first_cell(merge_row(r)) for r in rows[1:]]})
             elif rows:
-                items.append({'kind': 'rows', 'headers': None, 'rows': [merge_row(r) for r in rows]})
+                items.append({'kind': 'rows', 'headers': None,
+                              'rows': [mark_first_cell(merge_row(r)) for r in rows]})
             continue
         if '[[IMG:' in s:
             for part in re.split(r'(\[\[IMG:[^\]]+\]\])', s):
