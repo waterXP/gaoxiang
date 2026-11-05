@@ -1,29 +1,40 @@
+import { Modal, Button, Space } from 'antd'
+import { ExpandAltOutlined, CloseOutlined } from '@ant-design/icons'
 import { renderContent } from '../utils/renderContent.jsx'
 
 export default function PointModal({ point, onClose, onOpenStandalone, renderImage }) {
-  if (!point) return null
-
   return (
-    <div className="point-modal-backdrop" onClick={onClose}>
-      <div
-        className="point-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-label="知识点详情"
-        onClick={event => event.stopPropagation()}
-      >
-        <div className="point-modal-actions">
-          <button type="button" onClick={() => onOpenStandalone(point.id)}>
-            单独查看
-          </button>
-          <button type="button" onClick={onClose}>
-            关闭
-          </button>
+    <Modal
+      open={!!point}
+      onCancel={onClose}
+      footer={null}
+      width={min(820, window.innerWidth)}
+      title="知识点详情"
+      destroyOnClose
+    >
+      {point && (
+        <div style={{ width: '100%' }}>
+          <Space style={{ marginBottom: 16 }}>
+            <Button
+              type="primary"
+              icon={<ExpandAltOutlined />}
+              onClick={() => onOpenStandalone(point.id)}
+            >
+              单独查看
+            </Button>
+            <Button icon={<CloseOutlined />} onClick={onClose}>
+              关闭
+            </Button>
+          </Space>
+          <div className="point-modal-content">
+            {renderContent(point.content, { renderImage })}
+          </div>
         </div>
-        <div className="point-modal-content">
-          {renderContent(point.content, { renderImage })}
-        </div>
-      </div>
-    </div>
+      )}
+    </Modal>
   )
+}
+
+function min(a, b) {
+  return a < b ? a : b
 }

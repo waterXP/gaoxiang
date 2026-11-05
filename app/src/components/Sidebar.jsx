@@ -1,82 +1,104 @@
-import { useState } from 'react'
+import { ConfigProvider, theme, Select, Progress, Button, Menu } from 'antd'
+import {
+  CheckCircleFilled,
+  FireFilled,
+  CalendarOutlined,
+  UnorderedListOutlined,
+} from '@ant-design/icons'
 
 export default function Sidebar({
   books, curBookIdx, onSelectBook,
   chapters, curChIdx, done, streak, onSelect, onCheckin, isOpen, onClose
 }) {
-  const [bookListOpen, setBookListOpen] = useState(false)
   const today = new Date().toLocaleDateString('zh-CN')
   const checkedInToday = streak?.last === today
   const doneCount = Object.keys(done).length
   const total = chapters.length
-  const curBook = books[curBookIdx]
+  const pct = total ? Math.round((doneCount / total) * 100) : 0
+
+  const bookOptions = books.map((b, i) => ({
+    value: i,
+    label: b.title,
+    subtitle: b.subtitle,
+    searchText: `${b.title} ${b.subtitle}`,
+  }))
+
+  const chapterItems = chapters.map((ch, i) => ({
+    key: String(i),
+    icon: done[i] ? <CheckCircleFilled style={{ color: '#16a34a' }} /> : <UnorderedListOutlined />,
+    label: <span className="ch-label">{ch.title}</span>,
+  }))
 
   return (
-    <>
+    <ConfigProvider
+      theme={{
+        algorithm: theme.darkAlgorithm,
+        token: {
+          colorPrimary: '#4f8ef7',
+          colorBgBase: '#16213e',
+          colorBgContainer: '#16213e',
+          colorBgElevated: '#1e3a5f',
+          colorBgLayout: '#16213e',
+          colorBorder: '#2b4a7a',
+          colorBorderSecondary: '#1e3a5f',
+          colorText: '#e2e8f0',
+          colorTextSecondary: '#94a3b8',
+        },
+      }}
+    >
       {isOpen && <div className="sidebar-overlay" onClick={onClose} />}
       <div className={`sidebar${isOpen ? ' open' : ''}`}>
         <div className="sidebar-top">
-          {/* Book selector */}
-          <div className="book-selector">
-            <div className="book-current">
-              <div className="book-current-info">
-                <div className="book-current-title">{curBook.title}</div>
-                <div className="book-current-sub">{curBook.subtitle}</div>
-              </div>
-              {books.length > 1 && (
-                <button
-                  className={`book-switch-btn${bookListOpen ? ' open' : ''}`}
-                  onClick={() => setBookListOpen(o => !o)}
-                >
-                  换书 ▾
-                </button>
-              )}
-            </div>
-            {bookListOpen && (
-              <div className="book-list">
-                {books.map((b, i) => (
-                  <div
-                    key={b.id}
-                    className={`book-item${i === curBookIdx ? ' active' : ''}`}
-                    onClick={() => { onSelectBook(i); setBookListOpen(false) }}
-                  >
-                    <div className="book-item-title">{b.title}</div>
-                    <div className="book-item-sub">{b.subtitle}</div>
-                  </div>
-                ))}
+          <Select
+            className="book-select"
+            value={curBookIdx}
+            options={bookOptions}
+            onChange={onSelectBook}
+            showSearch
+            optionFilterProp="searchText"
+            popupMatchSelectWidth={false}
+            aria-label="选择书籍"
+            optionRender={(option) => (
+              <div className="book-option">
+                <span className="book-option-title">{option.data.label}</span>
+                <span className="book-option-sub">{option.data.subtitle}</span>
               </div>
             )}
-          </div>
+          />
 
           <div className="prog-row">
             <span>学习进度</span>
             <span>{doneCount} / {total} 章</span>
           </div>
-          <div className="prog-bar">
-            <div className="prog-fill" style={{ width: total ? `${doneCount / total * 100}%` : '0%' }} />
-          </div>
-          <button
-            className={`checkin-btn${checkedInToday ? ' done' : ''}`}
+          <Progress
+            percent={pct}
+            showInfo={false}
+            size="small"
+          />
+
+          <Button
+            type="primary"
+            block
+            icon={checkedInToday ? <CheckCircleFilled /> : <CalendarOutlined />}
             onClick={onCheckin}
           >
-            {checkedInToday ? `✅ 已打卡（连续 ${streak.days} 天）` : '📅 今日打卡'}
-          </button>
+            {checkedInToday ? (
+              <span>已打卡 · 连续 {streak.days} 天</span>
+            ) : (
+              <span>今日打卡 <FireFilled /></span>
+            )}
+          </Button>
         </div>
 
         <div className="ch-list">
-          {chapters.map((ch, i) => (
-            <div
-              key={i}
-              className={`ch-item${i === curChIdx ? ' active' : ''}${done[i] ? ' done' : ''}`}
-              onClick={() => onSelect(i)}
-              ref={i === curChIdx ? el => el?.scrollIntoView({ block: 'nearest' }) : null}
-            >
-              <div className="ch-dot" />
-              <div className="ch-label">{ch.title}</div>
-            </div>
-          ))}
+          <Menu
+            mode="inline"
+            selectedKeys={[String(curChIdx)]}
+            items={chapterItems}
+            onClick={({ key }) => onSelect(Number(key))}
+          />
         </div>
       </div>
-    </>
+    </ConfigProvider>
   )
 }

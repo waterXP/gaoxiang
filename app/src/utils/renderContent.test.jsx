@@ -1,7 +1,9 @@
-import { render, screen } from '@testing-library/react'
+import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { renderContent } from './renderContent.jsx'
+
+afterEach(() => cleanup())
 
 const pointMap = {
   'ch11-project-is-temporary': {
@@ -104,5 +106,42 @@ describe('renderContent point support', () => {
       style: undefined,
     })
     expect(screen.getByRole('button')).toHaveTextContent('/assets/sample.png|')
+  })
+
+  it('renders 2D headers as multiple header rows with spans', () => {
+    const { container } = render(
+      <div>
+        {renderContent([
+          {
+            headers: [
+              ['rows-2:知识领域', 'cols-2:项目管理过程组'],
+              ['启动过程组', '收尾过程组'],
+            ],
+            rows: [['整合管理', '制定项目章程', '结束项目或阶段']],
+          },
+        ])}
+      </div>,
+    )
+
+    const headRows = container.querySelectorAll('thead tr')
+    expect(headRows).toHaveLength(2)
+
+    const topCells = headRows[0].querySelectorAll('th')
+    expect(topCells).toHaveLength(2)
+    expect(topCells[0]).toHaveAttribute('rowspan', '2')
+    expect(topCells[0]).toHaveTextContent('知识领域')
+    expect(topCells[1]).toHaveAttribute('colspan', '2')
+    expect(topCells[1]).toHaveTextContent('项目管理过程组')
+
+    expect(headRows[1].querySelectorAll('th')).toHaveLength(2)
+  })
+
+  it('keeps flat headers as a single header row', () => {
+    const { container } = render(
+      <div>{renderContent([{ headers: ['A', 'B'], rows: [['1', '2']] }])}</div>,
+    )
+
+    expect(container.querySelectorAll('thead tr')).toHaveLength(1)
+    expect(container.querySelectorAll('thead th')).toHaveLength(2)
   })
 })

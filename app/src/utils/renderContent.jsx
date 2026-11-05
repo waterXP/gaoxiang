@@ -146,18 +146,29 @@ function parseCell(str) {
   return { text: content, colspan, rowspan, style: Object.keys(style).length ? style : undefined }
 }
 
-// 渲染新格式表格对象 { headers?, rows? }
+// 渲染表格对象 { headers?, rows? }
+// headers 支持两种写法：
+//   一维 ["A", "B"]                      → 单行表头（原写法）
+//   二维 [["rows-2:A", "cols-2:B"], [...]] → 多行表头，每行一个 <tr>
+function normalizeHeaderRows(headers) {
+  if (!Array.isArray(headers) || headers.length === 0) return []
+  return Array.isArray(headers[0]) ? headers : [headers]
+}
+
 function renderTableObj(tbl, key, options = {}) {
+  const headerRows = normalizeHeaderRows(tbl.headers)
   return (
     <table key={key}>
-      {tbl.headers && (
+      {headerRows.length > 0 && (
         <thead>
-          <tr>
-            {tbl.headers.map((h, j) => {
-              const c = parseCell(h)
-              return <th key={j} colSpan={c.colspan} rowSpan={c.rowspan} style={c.style}>{renderText(c.text, options)}</th>
-            })}
-          </tr>
+          {headerRows.map((row, r) => (
+            <tr key={r}>
+              {row.map((h, j) => {
+                const c = parseCell(h)
+                return <th key={j} colSpan={c.colspan} rowSpan={c.rowspan} style={c.style}>{renderText(c.text, options)}</th>
+              })}
+            </tr>
+          ))}
         </thead>
       )}
       {tbl.rows && (

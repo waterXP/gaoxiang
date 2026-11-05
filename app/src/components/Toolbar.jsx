@@ -1,3 +1,12 @@
+import { Input, Button, Space, Tooltip } from 'antd'
+import {
+  MenuOutlined,
+  SearchOutlined,
+  FireFilled,
+  EyeInvisibleOutlined,
+  EyeOutlined,
+} from '@ant-design/icons'
+
 export default function Toolbar({
   searchQuery, onSearch, streak, memoMode, onToggleMemo, onRevealAll, onToggleSidebar
 }) {
@@ -6,31 +15,42 @@ export default function Toolbar({
 
   return (
     <div className="toolbar">
-      <button className="tbtn sidebar-toggle" onClick={onToggleSidebar}>☰</button>
-      <div className="search-wrap">
-        <input
-          className="search-input"
-          type="text"
-          placeholder="搜索知识点…"
-          autoComplete="off"
-          value={searchQuery}
-          onChange={e => onSearch(e.target.value)}
-          onKeyDown={e => { if (e.key === 'Escape') onSearch('') }}
-        />
-        <span className="search-icon">🔍</span>
-      </div>
-      {days > 0 && <span className="streak">🔥 {days} 天</span>}
-      <button
-        className={`tbtn${memoMode ? ' on' : ''}`}
-        onClick={onToggleMemo}
-      >
-        🙈 背诵
-      </button>
-      {memoMode && (
-        <button className="tbtn" onClick={onRevealAll}>
-          👁 显示
-        </button>
+      <Button
+        className="sidebar-toggle"
+        icon={<MenuOutlined />}
+        onClick={onToggleSidebar}
+      />
+
+      <Input
+        className="search-input"
+        placeholder="搜索知识点…"
+        allowClear
+        prefix={<SearchOutlined style={{ color: 'rgba(0,0,0,0.35)' }} />}
+        value={searchQuery}
+        onChange={e => onSearch(e.target.value)}
+        onPressEnter={() => onSearch(searchQuery)}
+      />
+
+      {days > 0 && (
+        <Tooltip title="连续学习天数">
+          <span className="streak"><FireFilled style={{ color: '#f59e0b' }} /> {days} 天</span>
+        </Tooltip>
       )}
+
+      <Space size={6}>
+        <Button
+          type={memoMode ? 'primary' : 'default'}
+          icon={memoMode ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+          onClick={onToggleMemo}
+        >
+          {memoMode ? '背诵中' : '背诵'}
+        </Button>
+        {memoMode && (
+          <Button icon={<EyeOutlined />} onClick={onRevealAll}>
+            显示
+          </Button>
+        )}
+      </Space>
     </div>
   )
 }

@@ -1,3 +1,5 @@
+import { Button, Tag, Typography } from 'antd'
+import { ArrowLeftOutlined, ArrowRightOutlined, CheckOutlined } from '@ant-design/icons'
 import { useEffect, useRef } from 'react'
 import { getTypeStyle } from '../data/types.js'
 import { renderContent } from '../utils/renderContent.jsx'
@@ -50,12 +52,12 @@ function PageBlock({ page, memoMode, pointMap, onPointClick, renderImage }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
         <span className="page-marker">第 {page.page} 页</span>
         {!isPlain && (
-          <span
-            className="type-badge"
-            style={{ color: style.color }}
+          <Tag
+            color={style.color}
+            style={{ color: style.color, background: style.bg, borderColor: style.color }}
           >
             {style.icon} {style.label}
-          </span>
+          </Tag>
         )}
       </div>
       <div dangerouslySetInnerHTML={page.html ? { __html: page.html } : undefined}>
@@ -84,7 +86,7 @@ export default function ChapterView({
   if (!chapter) {
     return (
       <div className="chapter-panel">
-        <div className="ch-header"><h2>请从左侧选择章节</h2></div>
+        <div className="ch-header"><Typography.Title level={4} style={{ margin: 0 }}>请从左侧选择章节</Typography.Title></div>
         <div className="article-shell" ref={articleRef}>
           <div className="article" />
         </div>
@@ -95,20 +97,18 @@ export default function ChapterView({
   return (
     <div className="chapter-panel">
       <div className="ch-header">
-        <h2>{chapter.title}</h2>
+        <Typography.Title level={4} style={{ margin: 0, flex: 1 }}>{chapter.title}</Typography.Title>
         <span className="ch-meta">第 {chapter.startPage} 页起 · {pages.length} 页</span>
-        <button
-          className={`done-btn${done ? ' done' : ''}`}
+        <Button
+          type={done ? 'primary' : 'default'}
+          icon={done ? <CheckOutlined /> : undefined}
           onClick={onToggleDone}
         >
-          {done ? '✅ 已学完' : '✓ 标记已学'}
-        </button>
+          {done ? '已学完' : '标记已学'}
+        </Button>
       </div>
 
-      <div
-        className="article-shell"
-        ref={articleRef}
-      >
+      <div className="article-shell" ref={articleRef}>
         <div className="article">
           {standalonePoint ? (
             <div className="page-block type-普通" data-page="point">
@@ -131,9 +131,9 @@ export default function ChapterView({
       </div>
 
       <div className="ch-nav">
-        <button onClick={onPrev} disabled={curChIdx === 0}>← 上一章</button>
+        <Button icon={<ArrowLeftOutlined />} onClick={onPrev} disabled={curChIdx === 0}>上一章</Button>
         <span className="nav-info">{curChIdx + 1} / {totalChapters} 章</span>
-        <button onClick={onNext} disabled={curChIdx === totalChapters - 1}>下一章 →</button>
+        <Button icon={<ArrowRightOutlined />} iconPlacement="end" onClick={onNext} disabled={curChIdx === totalChapters - 1}>下一章</Button>
       </div>
     </div>
   )
